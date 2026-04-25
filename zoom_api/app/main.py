@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import random
 import uuid
 from datetime import datetime, timedelta
@@ -12,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from .config import CORS_ORIGINS, FRONTEND_BASE_URL
 from .database import Base, SessionLocal, engine, get_db
 from .models import Meeting, Participant
 from .schemas import (
@@ -25,18 +25,10 @@ from .schemas import (
     ScheduledMeetingCreate,
 )
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
-FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", FRONTEND_ORIGIN).rstrip("/")
-
 app = FastAPI(title="Zoom Clone API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        FRONTEND_ORIGIN,
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

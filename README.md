@@ -38,6 +38,13 @@ Open `http://localhost:3000`.
 
 ## Environment Variables
 
+Copy each example file before running locally:
+
+```bash
+cp zoom_api/.env.example zoom_api/.env
+cp zoom_web/.env.example zoom_web/.env.local
+```
+
 Frontend:
 
 ```bash
@@ -49,6 +56,8 @@ Backend:
 ```bash
 FRONTEND_ORIGIN=http://localhost:3000
 FRONTEND_BASE_URL=http://localhost:3000
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001
+DATABASE_URL=sqlite:///./zoom_clone.db
 ```
 
 ## Database Schema
@@ -75,6 +84,6 @@ The relationship is one meeting to many participants, keyed by the public Zoom-l
 ## Deployment Notes
 
 - Deploy `zoom_web` to Vercel or Netlify and set `NEXT_PUBLIC_API_BASE_URL` to the backend URL.
-- Deploy `zoom_api` to Render, Railway, or another Python host and set `FRONTEND_ORIGIN` and `FRONTEND_BASE_URL` to the deployed frontend URL.
+- Deploy `zoom_api` to Render, Railway, or another Python host. Set `FRONTEND_ORIGIN`, `FRONTEND_BASE_URL`, and `CORS_ORIGINS` to the deployed frontend URL.
+- Set `DATABASE_URL` on the backend if your host provides a managed database. Leave it unset to use the local SQLite default.
 - Ensure the backend host supports WebSockets.
-

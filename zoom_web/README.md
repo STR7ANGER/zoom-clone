@@ -2,6 +2,14 @@
 
 This is a Next.js template with shadcn/ui.
 
+## Environment
+
+Copy `.env.example` to `.env.local` for local development:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
 ## Adding components
 
 To add components to your app, run the following command:

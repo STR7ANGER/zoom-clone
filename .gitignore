@@ -6,6 +6,7 @@ zoom_api/__pycache__/
 zoom_api/**/*.py[cod]
 zoom_api/.env
 zoom_api/.env.*
+!zoom_api/.env.example
 zoom_api/*.db
 zoom_api/*.sqlite
 zoom_api/*.sqlite3
@@ -16,6 +17,6 @@ zoom_web/.next/
 zoom_web/out/
 zoom_web/build/
 zoom_web/.env*.local
+!zoom_web/.env.example
 zoom_web/next-env.d.ts
 zoom_web/*.tsbuildinfo
-
