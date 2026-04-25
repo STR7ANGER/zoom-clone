@@ -1,5 +1,9 @@
+"use client"
+
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import type { ReactNode } from "react"
+import { useState } from "react"
 import {
   Bot,
   CalendarDays,
@@ -22,6 +26,7 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { createInstantMeeting } from "@/lib/api"
 
 type AccountPage = "home" | "meetings"
 
@@ -111,6 +116,20 @@ const legalLinks = [
 ]
 
 function AccountHeader() {
+  const router = useRouter()
+  const [creatingMeeting, setCreatingMeeting] = useState(false)
+
+  async function hostMeeting() {
+    if (creatingMeeting) return
+    setCreatingMeeting(true)
+    try {
+      const { meeting, participant } = await createInstantMeeting()
+      router.push(`/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`)
+    } finally {
+      setCreatingMeeting(false)
+    }
+  }
+
   return (
     <header className="fixed inset-x-0 top-0 z-40 bg-white text-[#232333]">
       <div className="flex h-9 items-center justify-end gap-5 bg-[#050522] px-4 text-[13px] font-semibold text-white lg:px-6">
@@ -151,15 +170,20 @@ function AccountHeader() {
         <nav className="flex items-center gap-5 text-[14px] font-semibold text-[#5f5d7b] sm:gap-7">
           <Link href="/schedule">Schedule</Link>
           <Link href="/join">Join</Link>
-          <a className="hidden items-center gap-1 md:flex" href="#">
-            Host <ChevronDown className="size-3.5" />
-          </a>
+          <button
+            type="button"
+            onClick={hostMeeting}
+            disabled={creatingMeeting}
+            className="hidden items-center gap-1 disabled:opacity-60 md:flex"
+          >
+            {creatingMeeting ? "Creating..." : "Host"} <ChevronDown className="size-3.5" />
+          </button>
           <a className="hidden items-center gap-1 md:flex" href="#">
             Web App <ChevronDown className="size-3.5" />
           </a>
-          <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-base font-semibold text-white">
-            X
-          </span>
+        <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
+          DU
+        </span>
         </nav>
       </div>
     </header>
