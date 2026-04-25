@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import {
   ChevronDown,
@@ -20,14 +21,20 @@ const leftLinks = [
 ]
 
 const rightLinks = [
-  { label: "Meet", hasChevron: true },
-  { label: "Sign In" },
-  { label: "Support" },
+  { label: "Sign In", href: "/sign-in" },
+  { label: "Support", href: "#" },
 ]
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [meetMenuOpen, setMeetMenuOpen] = useState(false)
+
+  const meetLinks = [
+    { label: "Join a meeting", href: "/join" },
+    { label: "Host a meeting", href: "/myhome" },
+    { label: "Schedule a meeting", href: "/schedule" },
+  ]
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 24)
@@ -55,9 +62,18 @@ export function Navbar() {
             {/* Logo */}
             <a
               href="#"
-              className={`shrink-0 text-[28px] leading-none font-bold tracking-[-0.06em] ${logoColor}`}
+              className="shrink-0"
+              aria-label="Zoom home"
             >
-              zoom
+              <img
+                src={
+                  isScrolled
+                    ? "https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom@2x.png"
+                    : "https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom-white@2x.png"
+                }
+                alt="Zoom"
+                className="h-7 w-auto"
+              />
             </a>
 
             {/* Desktop nav links */}
@@ -94,17 +110,43 @@ export function Navbar() {
               <Search className="size-4 stroke-[2.2]" />
             </button>
 
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setMeetMenuOpen((v) => !v)}
+                className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
+                aria-haspopup="menu"
+                aria-expanded={meetMenuOpen}
+              >
+                <span>Meet</span>
+                <ChevronDown
+                  className={`size-3.5 opacity-70 transition-transform ${meetMenuOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {meetMenuOpen ? (
+                <div className="absolute top-full left-0 mt-1.5 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
+                  {meetLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMeetMenuOpen(false)}
+                      className="block rounded-md px-3 py-2 text-[13px] font-medium text-[#0b124b] transition-colors hover:bg-[#f3f7ff]"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
             {rightLinks.map((item) => (
-              <a
+              <Link
                 key={item.label}
-                href="#"
+                href={item.href}
                 className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
               >
                 <span>{item.label}</span>
-                {item.hasChevron ? (
-                  <ChevronDown className="size-3.5 opacity-70" />
-                ) : null}
-              </a>
+              </Link>
             ))}
 
             {/* Contact Sales */}
@@ -119,8 +161,11 @@ export function Navbar() {
             </Button>
 
             {/* Sign Up Free */}
-            <Button className="h-9 rounded-lg bg-[#2d8cff] px-4 text-[13px] font-semibold text-white hover:bg-[#1e7af1]">
-              Sign Up Free
+            <Button
+              asChild
+              className="h-9 rounded-lg bg-[#2d8cff] px-4 text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
+            >
+              <Link href="/sign-up">Sign Up Free</Link>
             </Button>
 
             {/* Grid / Apps */}
@@ -142,8 +187,11 @@ export function Navbar() {
             >
               <Search className="size-4 stroke-[2.2]" />
             </button>
-            <Button className="h-9 rounded-lg bg-[#2467f4] px-3.5 text-[13px] font-semibold text-white hover:bg-[#1e57d1]">
-              Sign Up
+            <Button
+              asChild
+              className="h-9 rounded-lg bg-[#2467f4] px-3.5 text-[13px] font-semibold text-white hover:bg-[#1e57d1]"
+            >
+              <Link href="/sign-up">Sign Up</Link>
             </Button>
             <button
               type="button"
@@ -181,19 +229,33 @@ export function Navbar() {
                   | LucideIcon
                   | undefined
                 return (
-                  <a
+                  <Link
                     key={item.label}
-                    href="#"
+                    href={"href" in item ? item.href : "#"}
                     className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
                   >
                     {Icon ? <Icon className={`size-4 ${aiIconColor}`} /> : null}
                     <span>{item.label}</span>
-                    {item.hasChevron ? (
+                    {"hasChevron" in item && item.hasChevron ? (
                       <ChevronDown className="ml-auto size-4 opacity-60" />
                     ) : null}
-                  </a>
+                  </Link>
                 )
               })}
+              <div className="mt-1 px-3 pb-1">
+                <p className={`mb-1.5 text-xs font-semibold ${textColor}`}>Meet</p>
+                <div className="flex flex-col gap-1">
+                  {meetLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className={`rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/10 pt-2.5">
                 <Button
                   className={`h-10 rounded-lg text-[13px] font-semibold ${
@@ -204,8 +266,11 @@ export function Navbar() {
                 >
                   Contact Sales
                 </Button>
-                <Button className="h-10 rounded-lg bg-[#2d8cff] text-[13px] font-semibold text-white hover:bg-[#1e7af1]">
-                  Sign Up Free
+                <Button
+                  asChild
+                  className="h-10 rounded-lg bg-[#2d8cff] text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
+                >
+                  <Link href="/sign-up">Sign Up Free</Link>
                 </Button>
               </div>
             </nav>
