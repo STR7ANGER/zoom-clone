@@ -99,6 +99,36 @@ def get_meeting_or_404(db: Session, meeting_id: str) -> Meeting:
     return meeting
 
 
+def mark_meeting_recent_if_empty(db: Session, meeting_id: str) -> None:
+    meeting = db.scalar(
+        select(Meeting)
+        .options(selectinload(Meeting.participants))
+        .where(Meeting.meeting_id == meeting_id)
+    )
+    if not meeting or not meeting.participants:
+        return
+
+    has_active_participants = any(participant.left_at is None for participant in meeting.participants)
+    if not has_active_participants and meeting.status != "recent":
+        meeting.status = "recent"
+        db.commit()
+
+
+def reconcile_recent_meetings(db: Session) -> None:
+    meetings = db.scalars(
+        select(Meeting)
+        .options(selectinload(Meeting.participants))
+        .where(Meeting.status != "recent")
+    ).all()
+    changed = False
+    for meeting in meetings:
+        if meeting.participants and all(participant.left_at is not None for participant in meeting.participants):
+            meeting.status = "recent"
+            changed = True
+    if changed:
+        db.commit()
+
+
 def create_participant(
     db: Session,
     meeting_id: str,
@@ -184,10 +214,14 @@ def list_meetings(
     status: str | None = Query(default=None, pattern="^(upcoming|recent)$"),
     db: Session = Depends(get_db),
 ) -> list[Meeting]:
+    reconcile_recent_meetings(db)
     statement = select(Meeting).options(selectinload(Meeting.participants))
     if status:
         statement = statement.where(Meeting.status == status)
-    statement = statement.order_by(Meeting.starts_at.asc())
+    if status == "recent":
+        statement = statement.order_by(Meeting.starts_at.desc())
+    else:
+        statement = statement.order_by(Meeting.starts_at.asc())
     return list(db.scalars(statement).all())
 
 
@@ -285,6 +319,8 @@ async def update_participant(
         participant.left_at = datetime.utcnow()
     db.commit()
     db.refresh(participant)
+    if payload.left:
+        mark_meeting_recent_if_empty(db, participant.meeting_id)
     await manager.broadcast(
         participant.meeting_id,
         {
@@ -315,6 +351,7 @@ async def remove_participant(
     if participant:
         participant.left_at = datetime.utcnow()
         db.commit()
+        mark_meeting_recent_if_empty(db, meeting_id)
     await manager.send(meeting_id, participant_id, {"type": "removed"})
     await manager.broadcast(meeting_id, {"type": "participant-left", "participantId": participant_id}, exclude=participant_id)
     manager.disconnect(meeting_id, participant_id)
@@ -376,7 +413,7 @@ async def meeting_socket(
         if participant and participant.left_at is None:
             participant.left_at = datetime.utcnow()
             db.commit()
+            mark_meeting_recent_if_empty(db, meeting_id)
         db.close()
         manager.disconnect(meeting_id, participant_id)
         await manager.broadcast(meeting_id, {"type": "participant-left", "participantId": participant_id})
-

@@ -131,12 +131,14 @@ function MeetingRoomContent() {
   const socketRef = useRef<WebSocket | null>(null)
   const peersRef = useRef<Record<string, RTCPeerConnection>>({})
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const panelModeRef = useRef<PanelMode>(null)
 
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [participants, setParticipants] = useState<Record<string, Participant>>({})
   const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({})
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [chatText, setChatText] = useState("")
+  const [unreadChatCount, setUnreadChatCount] = useState(0)
   const [muted, setMuted] = useState(false)
   const [cameraOn, setCameraOn] = useState(true)
   const [screenSharing, setScreenSharing] = useState(false)
@@ -180,6 +182,7 @@ function MeetingRoomContent() {
   }, [cameraOn, loading, meeting, screenSharing])
 
   useEffect(() => {
+    panelModeRef.current = panelMode
     showControls()
     return () => {
       if (controlsTimerRef.current) clearTimeout(controlsTimerRef.current)
@@ -363,6 +366,9 @@ function MeetingRoomContent() {
 
     if (message.type === "chat-message" && message.chat) {
       setMessages((current) => [...current, message.chat!])
+      if (panelModeRef.current !== "chat") {
+        setUnreadChatCount((count) => count + 1)
+      }
       return
     }
 
@@ -471,6 +477,16 @@ function MeetingRoomContent() {
     activeParticipants
       .filter((participant) => participant.participant_id !== participantId)
       .forEach((participant) => send({ type: "host-mute-all", target: participant.participant_id }))
+  }
+
+  function toggleChatPanel() {
+    setPanelMode((value) => {
+      const nextMode = value === "chat" ? null : "chat"
+      if (nextMode === "chat") {
+        setUnreadChatCount(0)
+      }
+      return nextMode
+    })
   }
 
   function submitChat(event: React.FormEvent<HTMLFormElement>) {
@@ -583,7 +599,8 @@ function MeetingRoomContent() {
               active={panelMode === "chat"}
               icon={MessageSquare}
               label="Chat"
-              onClick={() => setPanelMode((value) => (value === "chat" ? null : "chat"))}
+              badge={unreadChatCount}
+              onClick={toggleChatPanel}
             />
             <ToolButton icon={Smile} label="React" onClick={() => undefined} />
             <ToolButton
@@ -642,6 +659,7 @@ function ToolButton({
   active = false,
   danger = false,
   green = false,
+  badge = 0,
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
@@ -649,6 +667,7 @@ function ToolButton({
   active?: boolean
   danger?: boolean
   green?: boolean
+  badge?: number
 }) {
   return (
     <button
@@ -656,8 +675,13 @@ function ToolButton({
       onClick={onClick}
       className={`flex min-w-16 flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-white ${active ? "bg-white/12" : "hover:bg-white/10"}`}
     >
-      <span className={green ? "rounded-md bg-[#58ee87] p-1 text-black" : danger ? "text-[#ff5b5b]" : ""}>
+      <span className={`relative ${green ? "rounded-md bg-[#58ee87] p-1 text-black" : danger ? "text-[#ff5b5b]" : ""}`}>
         <Icon className="size-7" />
+        {badge > 0 ? (
+          <span className="absolute -top-2 -right-2 flex min-w-5 items-center justify-center rounded-full bg-[#ff3b30] px-1.5 text-[11px] font-bold leading-5 text-white ring-2 ring-black">
+            {badge > 99 ? "99+" : badge}
+          </span>
+        ) : null}
       </span>
       <span className="text-base leading-tight">{label}</span>
     </button>
