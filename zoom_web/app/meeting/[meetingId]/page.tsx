@@ -274,8 +274,10 @@ function MeetingRoomContent() {
 
     const audioTrack = localStreamRef.current?.getAudioTracks()[0]
     const videoTrack = currentVideoTrackRef.current ?? localStreamRef.current?.getVideoTracks()[0]
-    if (audioTrack && localStreamRef.current) peer.addTrack(audioTrack, localStreamRef.current)
-    if (videoTrack) peer.addTrack(videoTrack, new MediaStream([videoTrack]))
+    if (localStreamRef.current) {
+      if (audioTrack) peer.addTrack(audioTrack, localStreamRef.current)
+      if (videoTrack) peer.addTrack(videoTrack, localStreamRef.current)
+    }
 
     peer.onicecandidate = (event) => {
       if (event.candidate) {
@@ -284,10 +286,14 @@ function MeetingRoomContent() {
     }
 
     peer.ontrack = (event) => {
-      const [stream] = event.streams
-      if (stream) {
-        setRemoteStreams((current) => ({ ...current, [target]: stream }))
-      }
+      setRemoteStreams((current) => {
+        const stream = current[target] ?? new MediaStream()
+        const alreadyAdded = stream.getTracks().some((track) => track.id === event.track.id)
+        if (!alreadyAdded) {
+          stream.addTrack(event.track)
+        }
+        return { ...current, [target]: stream }
+      })
     }
 
     peer.onconnectionstatechange = () => {
