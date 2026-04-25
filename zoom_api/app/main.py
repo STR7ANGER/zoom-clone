@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any
 
-from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, HTTPException, Query, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -295,12 +295,17 @@ async def update_participant(
     return participant
 
 
-@app.delete("/meetings/{meeting_id}/participants/{participant_id}", status_code=204)
+@app.delete(
+    "/meetings/{meeting_id}/participants/{participant_id}",
+    status_code=204,
+    response_class=Response,
+    response_model=None,
+)
 async def remove_participant(
     meeting_id: str,
     participant_id: str,
     db: Session = Depends(get_db),
-) -> None:
+) -> Response:
     participant = db.scalar(
         select(Participant).where(
             Participant.meeting_id == meeting_id,
@@ -313,6 +318,7 @@ async def remove_participant(
     await manager.send(meeting_id, participant_id, {"type": "removed"})
     await manager.broadcast(meeting_id, {"type": "participant-left", "participantId": participant_id}, exclude=participant_id)
     manager.disconnect(meeting_id, participant_id)
+    return Response(status_code=204)
 
 
 @app.websocket("/ws/meetings/{meeting_id}")
@@ -373,5 +379,4 @@ async def meeting_socket(
         db.close()
         manager.disconnect(meeting_id, participant_id)
         await manager.broadcast(meeting_id, {"type": "participant-left", "participantId": participant_id})
-
 
