@@ -375,4 +375,3 @@ async def meeting_socket(
         await manager.broadcast(meeting_id, {"type": "participant-left", "participantId": participant_id})
 
 
-seed_database()

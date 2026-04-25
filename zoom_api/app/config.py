@@ -34,4 +34,11 @@ CORS_ORIGINS = get_env_list(
         "http://127.0.0.1:3001",
     ],
 )
-DATABASE_URL = get_env("DATABASE_URL", f"sqlite:///{BASE_DIR / 'zoom_clone.db'}")
+raw_database_url = os.getenv("DATABASE_URL")
+if raw_database_url and raw_database_url.strip():
+    DATABASE_URL = raw_database_url.strip()
+elif os.getenv("RENDER", "").strip().lower() == "true":
+    # Render instances are ephemeral; default to a writable temp location when DATABASE_URL is not set.
+    DATABASE_URL = "sqlite:////tmp/zoom_clone.db"
+else:
+    DATABASE_URL = f"sqlite:///{BASE_DIR / 'zoom_clone.db'}"
