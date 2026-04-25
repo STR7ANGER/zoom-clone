@@ -31,12 +31,12 @@ export function ProductHighlightSection() {
   useEffect(() => {
     const calc = () => {
       const vw = window.innerWidth
-      if (vw < 480) setCardWidth(Math.round(vw * 0.78))
-      else if (vw < 768) setCardWidth(Math.round(vw * 0.5))
-      else if (vw < 1024) setCardWidth(Math.round(vw * 0.34))
-      else if (vw < 1280) setCardWidth(Math.round(vw * 0.25))
-      else if (vw < 1536) setCardWidth(Math.round(vw * 0.21))
-      else setCardWidth(Math.round(vw * 0.18))
+      if (vw < 480) setCardWidth(Math.round(vw * 0.72))
+      else if (vw < 768) setCardWidth(Math.round(vw * 0.46))
+      else if (vw < 1024) setCardWidth(Math.round(vw * 0.3))
+      else if (vw < 1280) setCardWidth(Math.round(vw * 0.22))
+      else if (vw < 1536) setCardWidth(Math.round(vw * 0.19))
+      else setCardWidth(Math.round(vw * 0.165))
     }
     calc()
     window.addEventListener("resize", calc)
@@ -71,14 +71,16 @@ export function ProductHighlightSection() {
   const realIndex = ((activeIndex % total) + total) % total
 
   return (
-    <section className="bg-transparent py-10 sm:py-12 lg:py-14">
+    <section className="bg-transparent py-8 sm:py-10 lg:py-12">
       <div className="w-full overflow-hidden">
         <div
           className="flex"
           style={{
             gap: `${CARD_GAP}px`,
             transform: `translateX(${translateX}px)`,
-            transition: isAnimating ? "transform 0.52s cubic-bezier(0.4, 0, 0.2, 1)" : "none",
+            transition: isAnimating
+              ? "transform 0.52s cubic-bezier(0.4, 0, 0.2, 1)"
+              : "none",
             willChange: "transform",
           }}
           onTransitionEnd={() => {
@@ -94,11 +96,11 @@ export function ProductHighlightSection() {
           {visibleCards.map((card, index) => (
             <div
               key={`${card.title}-${index}`}
-              className="group relative shrink-0 overflow-hidden rounded-2xl shadow-[0_20px_48px_rgba(8,16,60,0.26)]"
+              className="group relative shrink-0 overflow-hidden rounded-xl shadow-[0_16px_40px_rgba(8,16,60,0.22)]"
               style={{
                 width: cardWidth,
                 height: Math.round(cardWidth * 1.26),
-                minHeight: 240,
+                minHeight: 210,
               }}
             >
               <Image
@@ -114,14 +116,14 @@ export function ProductHighlightSection() {
         </div>
       </div>
 
-      <div className="mx-auto mt-7 grid max-w-[1700px] grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:mt-8 sm:gap-5 sm:px-6 lg:px-8 xl:px-10">
+      <div className="mx-auto mt-5 grid max-w-[1700px] grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:mt-6 sm:gap-4 sm:px-6 lg:px-8 xl:px-10">
         <button
           type="button"
           onClick={() => navigate(-1)}
           aria-label="Previous slide"
-          className="inline-flex size-11 items-center justify-center rounded-full bg-[#edf2fd] text-[#0b124b] shadow-sm transition hover:bg-[#dde7f8] active:scale-95 sm:size-12"
+          className="inline-flex size-9 items-center justify-center rounded-full bg-[#edf2fd] text-[#0b124b] shadow-sm transition hover:bg-[#dde7f8] active:scale-95 sm:size-10"
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft className="size-4" />
         </button>
 
         <div className="flex items-center justify-center gap-2">
@@ -135,8 +137,10 @@ export function ProductHighlightSection() {
                 startTimer()
               }}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === realIndex ? "w-6 bg-[#0b124b]" : "w-2.5 bg-[#c4d3ee] hover:bg-[#a4bbe0]"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === realIndex
+                  ? "w-5 bg-[#0b124b]"
+                  : "w-2 bg-[#c4d3ee] hover:bg-[#a4bbe0]"
               }`}
             />
           ))}
@@ -146,9 +150,9 @@ export function ProductHighlightSection() {
           type="button"
           onClick={() => navigate(1)}
           aria-label="Next slide"
-          className="inline-flex size-11 items-center justify-center rounded-full bg-[#edf2fd] text-[#0b124b] shadow-sm transition hover:bg-[#dde7f8] active:scale-95 sm:size-12"
+          className="inline-flex size-9 items-center justify-center rounded-full bg-[#edf2fd] text-[#0b124b] shadow-sm transition hover:bg-[#dde7f8] active:scale-95 sm:size-10"
         >
-          <ArrowRight className="size-5" />
+          <ArrowRight className="size-4" />
         </button>
       </div>
     </section>

@@ -141,35 +141,44 @@ const tabData = {
     ],
     image: "/work_together/employee-engagement.jpg",
   },
-} satisfies Record<(typeof tabs)[number], { description: string; bullets: { title: string; body: string }[]; image: string }>
+} satisfies Record<
+  (typeof tabs)[number],
+  {
+    description: string
+    bullets: { title: string; body: string }[]
+    image: string
+  }
+>
 
 export function WorkTogetherSection() {
-  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Collaboration")
+  const [activeTab, setActiveTab] =
+    useState<(typeof tabs)[number]>("Collaboration")
   const data = tabData[activeTab]
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl leading-[0.98] font-semibold tracking-[-0.05em] text-[#0b124b] sm:text-5xl lg:text-[72px]">
+    <section className="bg-white py-12 sm:py-14 lg:py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-[2.1rem] leading-[1] font-semibold tracking-[-0.04em] text-[#0b124b] sm:text-[3rem] lg:text-[56px]">
             One platform.
             <br />
             Endless ways to work together.
           </h2>
-          <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-[#0b124b] sm:text-lg lg:mt-6 lg:text-[22px]">
-            From client pitches to global all-hands, patient consults to classrooms, Zoom
-            delivers the flexibility and reliability you need. And with AI built in, every
-            interaction is faster, easier, and more productive.
+          <p className="mx-auto mt-4 max-w-3xl text-[14px] leading-relaxed text-[#0b124b] sm:text-[16px] lg:mt-5 lg:text-[18px]">
+            From client pitches to global all-hands, patient consults to
+            classrooms, Zoom delivers the flexibility and reliability you need.
+            And with AI built in, every interaction is faster, easier, and more
+            productive.
           </p>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-5">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 lg:gap-3.5">
           {tabs.map((tab) => (
             <button
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`rounded-[16px] px-4 py-3 text-sm font-semibold transition-all duration-200 sm:px-5 sm:text-base lg:rounded-[18px] lg:px-7 lg:py-4 lg:text-[18px] ${
+              className={`rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 sm:px-4 sm:text-[14px] lg:px-5 lg:py-3 lg:text-[15px] ${
                 activeTab === tab
                   ? "border border-[#b8cdfb] bg-[#eff5ff] text-[#0b124b] shadow-[0_8px_24px_rgba(36,103,244,0.08)]"
                   : "text-[#0b124b]/55 hover:text-[#0b124b]/80"
@@ -180,32 +189,33 @@ export function WorkTogetherSection() {
           ))}
         </div>
 
-        <div className="mt-12 grid items-start gap-8 xl:grid-cols-[0.92fr_1.08fr] xl:gap-10">
+        <div className="mt-10 grid items-start gap-6 xl:grid-cols-[0.92fr_1.08fr] xl:gap-8">
           <div>
-            <p className="text-[17px] leading-[1.5] text-[#0b124b] sm:text-[18px] lg:text-[22px]">
+            <p className="text-[14px] leading-[1.55] text-[#0b124b] sm:text-[15px] lg:text-[17px]">
               {data.description}
             </p>
 
-            <ul className="mt-7 space-y-5 lg:mt-8 lg:space-y-6">
+            <ul className="mt-6 space-y-4 lg:mt-7 lg:space-y-4">
               {data.bullets.map((item) => (
                 <li
                   key={item.title}
-                  className="flex gap-3 text-[15px] leading-[1.5] text-[#0b124b] sm:text-[16px] lg:gap-4 lg:text-[18px]"
+                  className="flex gap-3 text-[13px] leading-[1.5] text-[#0b124b] sm:text-[14px] lg:gap-3.5 lg:text-[15px]"
                 >
-                  <span className="mt-2.5 size-2.5 shrink-0 rounded-full bg-[#0b124b]" />
+                  <span className="mt-2 size-2 shrink-0 rounded-full bg-[#0b124b]" />
                   <p>
-                    <span className="font-semibold">{item.title}:</span> {item.body}
+                    <span className="font-semibold">{item.title}:</span>{" "}
+                    {item.body}
                   </p>
                 </li>
               ))}
             </ul>
 
-            <Button className="mt-8 h-12 rounded-[16px] bg-[#2467f4] px-7 text-[16px] font-semibold text-white hover:bg-[#1f58d8] sm:h-13 sm:px-8 sm:text-[17px] lg:mt-10 lg:h-14 lg:px-9 lg:text-[18px]">
+            <Button className="mt-7 h-10 rounded-xl bg-[#2467f4] px-6 text-[14px] font-semibold text-white hover:bg-[#1f58d8] sm:h-11 sm:px-7 sm:text-[15px] lg:mt-8 lg:h-11">
               Get started
             </Button>
           </div>
 
-          <div className="overflow-hidden rounded-[26px] bg-[#f4f7fb] shadow-[0_18px_50px_rgba(15,23,42,0.1)] lg:rounded-[30px]">
+          <div className="overflow-hidden rounded-[18px] bg-[#f4f7fb] shadow-[0_14px_36px_rgba(15,23,42,0.08)] lg:rounded-[20px]">
             <div className="relative aspect-[1.2/1] w-full">
               <Image
                 src={data.image}

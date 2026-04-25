@@ -6,7 +6,8 @@ const reports = [
   {
     image: "/report/gartner-magic-quadrant.webp",
     alt: "Gartner Magic Quadrant report cover",
-    title: "A Leader in the Gartner® Magic Quadrant™ for UCaaS, Worldwide 2025. 6th year in a row!",
+    title:
+      "A Leader in the Gartner® Magic Quadrant™ for UCaaS, Worldwide 2025. 6th year in a row!",
     cta: "Read the report",
     imageWrapClassName: "bg-white",
   },
@@ -28,13 +29,16 @@ const reports = [
 
 export function ReportsSection() {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-[1380px] px-4 sm:px-6 lg:px-10">
-        <div className="grid gap-x-8 gap-y-10 sm:gap-x-10 lg:gap-x-12 lg:gap-y-12 md:grid-cols-2 xl:grid-cols-3">
+    <section className="bg-white py-12 sm:py-14 lg:py-16">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-x-6 gap-y-8 sm:gap-x-8 md:grid-cols-2 lg:gap-x-10 lg:gap-y-10 xl:grid-cols-3">
           {reports.map((report) => (
-            <article key={report.title} className="mx-auto flex w-full max-w-[420px] flex-col items-start">
+            <article
+              key={report.title}
+              className="mx-auto flex w-full max-w-[360px] flex-col items-start"
+            >
               <div
-                className={`w-full overflow-hidden rounded-[22px] ${report.imageWrapClassName} shadow-none sm:rounded-[24px] lg:rounded-[26px]`}
+                className={`w-full overflow-hidden rounded-[16px] ${report.imageWrapClassName} shadow-none sm:rounded-[18px] lg:rounded-[20px]`}
               >
                 <div className="relative aspect-[0.94/1] w-full">
                   <Image
@@ -47,11 +51,11 @@ export function ReportsSection() {
                 </div>
               </div>
 
-              <h3 className="mt-5 max-w-[390px] text-[22px] leading-[1.08] font-semibold tracking-[-0.04em] text-[#0b124b] sm:mt-6 sm:text-[26px] lg:max-w-[410px] lg:text-[30px]">
+              <h3 className="mt-4 max-w-[330px] text-[18px] leading-[1.15] font-semibold tracking-[-0.03em] text-[#0b124b] sm:mt-5 sm:text-[21px] lg:max-w-[350px] lg:text-[24px]">
                 {report.title}
               </h3>
 
-              <Button className="mt-6 h-12 rounded-[16px] bg-[#2467f4] px-6 text-[16px] font-semibold text-white hover:bg-[#1f58d8] sm:mt-7 sm:h-13 sm:px-7 sm:text-[17px] lg:h-14 lg:rounded-[18px] lg:px-8 lg:text-[18px]">
+              <Button className="mt-5 h-10 rounded-xl bg-[#2467f4] px-5 text-[14px] font-semibold text-white hover:bg-[#1f58d8] sm:mt-6 sm:h-11 sm:px-6 sm:text-[15px] lg:h-11 lg:px-6">
                 {report.cta}
               </Button>
             </article>
