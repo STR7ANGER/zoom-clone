@@ -2,6 +2,7 @@ import { AiCompanionSection } from "@/components/landing/sections/ai-companion-s
 import { BusinessCtaSection } from "@/components/landing/sections/business-cta-section"
 import { CustomerStoriesSection } from "@/components/landing/sections/customer-stories-section"
 import { HeroSection } from "@/components/landing/sections/hero-section"
+import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
 import { NewsSection } from "@/components/landing/sections/news-section"
 import { ReportsSection } from "@/components/landing/sections/reports-section"
 import { TrustSection } from "@/components/landing/sections/trust-section"
@@ -18,6 +19,7 @@ export function LandingPage() {
       <CustomerStoriesSection />
       <NewsSection />
       <BusinessCtaSection />
+      <LandingFloatingWidgets />
     </>
   )
 }

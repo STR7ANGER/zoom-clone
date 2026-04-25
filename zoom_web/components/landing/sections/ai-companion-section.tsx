@@ -72,7 +72,7 @@ export function AiCompanionSection() {
 
             <div className="mt-7 w-12 border-t-2 border-[#0b124b]/50 pt-6" />
 
-            <div className="mt-5">
+            <div>
               <img
                 src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/couch-cork.png"
                 alt="couch + cork"

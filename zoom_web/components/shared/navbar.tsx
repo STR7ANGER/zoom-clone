@@ -8,7 +8,6 @@ import {
   Grip,
   Menu,
   Search,
-  Sparkles,
   type LucideIcon,
 } from "lucide-react"
 
@@ -17,14 +16,12 @@ import { createInstantMeeting } from "@/lib/api"
 
 const leftLinks = [
   { label: "Products", hasChevron: true },
-  { label: "AI", hasChevron: true, icon: Sparkles },
+  { label: "AI", hasChevron: true, iconUrl: "https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/ai-companion-icon.svg" },
   { label: "Solutions", hasChevron: true },
   { label: "Pricing" },
 ]
 
-const rightLinks = [
-  { label: "Support", href: "#" },
-]
+const rightLinks = [{ label: "Support", href: "#" }]
 
 export function Navbar() {
   const router = useRouter()
@@ -56,7 +53,9 @@ export function Navbar() {
       const { meeting, participant } = await createInstantMeeting()
       setMeetMenuOpen(false)
       setMobileMenuOpen(false)
-      router.push(`/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`)
+      router.push(
+        `/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`
+      )
     } finally {
       setCreatingMeeting(false)
     }
@@ -75,11 +74,7 @@ export function Navbar() {
           {/* Left: Logo + Nav */}
           <div className="flex items-center gap-4 lg:gap-6">
             {/* Logo */}
-            <a
-              href="#"
-              className="shrink-0"
-              aria-label="Zoom home"
-            >
+            <a href="#" className="shrink-0" aria-label="Zoom home">
               <img
                 src={
                   isScrolled
@@ -94,14 +89,19 @@ export function Navbar() {
             {/* Desktop nav links */}
             <nav className="hidden items-center gap-0.5 lg:flex">
               {leftLinks.map((item) => {
-                const Icon = item.icon
+                const Icon = ("icon" in item ? item.icon : undefined) as
+                  | LucideIcon
+                  | undefined
+                const IconUrl = "iconUrl" in item ? item.iconUrl : undefined
                 return (
                   <a
                     key={item.label}
                     href="#"
                     className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
                   >
-                    {Icon ? (
+                    {IconUrl ? (
+                      <img src={IconUrl} alt="AI" className="size-3.5" />
+                    ) : Icon ? (
                       <Icon className={`size-3.5 ${aiIconColor}`} />
                     ) : null}
                     <span>{item.label}</span>
@@ -125,6 +125,7 @@ export function Navbar() {
               <Search className="size-4 stroke-[2.2]" />
             </button>
 
+            {/* Meet dropdown */}
             <div className="relative">
               <button
                 type="button"
@@ -135,7 +136,9 @@ export function Navbar() {
               >
                 <span>Meet</span>
                 <ChevronDown
-                  className={`size-3.5 opacity-70 transition-transform ${meetMenuOpen ? "rotate-180" : ""}`}
+                  className={`size-3.5 opacity-70 transition-transform ${
+                    meetMenuOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
               {meetMenuOpen ? (
@@ -160,7 +163,7 @@ export function Navbar() {
                       >
                         {link.label}
                       </Link>
-                    ),
+                    )
                   )}
                 </div>
               ) : null}
@@ -180,7 +183,7 @@ export function Navbar() {
               className={`ml-1.5 h-9 rounded-lg px-4 text-[13px] font-semibold transition-colors ${
                 isScrolled
                   ? "border border-[#c5d7f8] bg-white text-[#0b124b] hover:bg-[#f0f5ff]"
-                  : "border border-white/40 bg-transparent text-white hover:bg-white/10"
+                  : "border border-white/40 bg-[#eef4ff] text-[#0b124b] hover:bg-white"
               }`}
             >
               Contact Sales
@@ -188,14 +191,16 @@ export function Navbar() {
 
             <Button
               asChild
-              className="h-9 rounded-lg bg-[#2d8cff] px-4 text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
+              className="h-9 rounded-lg bg-[#0b5cff] px-4 text-[13px] font-semibold text-white hover:bg-[#084bd8]"
             >
-              <Link href="https://preview.zoom.com/en/products/whats-new/">What&apos;s New</Link>
+              <Link href="https://preview.zoom.com/en/products/whats-new/">
+                What&apos;s New
+              </Link>
             </Button>
 
             <button
               type="button"
-              className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white shadow-sm"
+              className="inline-flex size-8 items-center justify-center rounded-full bg-[#0b5cff] text-[12px] font-bold text-white shadow-sm"
               aria-label="Demo User profile"
             >
               DU
@@ -211,7 +216,7 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Tablet: search + sign up + hamburger */}
+          {/* Tablet */}
           <div className="hidden items-center gap-2 md:flex lg:hidden">
             <button
               type="button"
@@ -220,7 +225,7 @@ export function Navbar() {
             >
               <Search className="size-4 stroke-[2.2]" />
             </button>
-            <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
+            <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#0b5cff] text-[12px] font-bold text-white">
               DU
             </span>
             <button
@@ -233,7 +238,7 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile: hamburger only */}
+          {/* Mobile */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen((v) => !v)}
@@ -244,7 +249,7 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Mobile dropdown menu */}
+        {/* Mobile dropdown */}
         {mobileMenuOpen && (
           <div
             className={`border-t lg:hidden ${
@@ -258,13 +263,18 @@ export function Navbar() {
                 const Icon = ("icon" in item ? item.icon : undefined) as
                   | LucideIcon
                   | undefined
+                const IconUrl = "iconUrl" in item ? item.iconUrl : undefined
                 return (
                   <Link
                     key={item.label}
                     href={"href" in item ? item.href : "#"}
                     className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
                   >
-                    {Icon ? <Icon className={`size-4 ${aiIconColor}`} /> : null}
+                    {IconUrl ? (
+                      <img src={IconUrl} alt="AI" className="size-4" />
+                    ) : Icon ? (
+                      <Icon className={`size-4 ${aiIconColor}`} />
+                    ) : null}
                     <span>{item.label}</span>
                     {"hasChevron" in item && item.hasChevron ? (
                       <ChevronDown className="ml-auto size-4 opacity-60" />
@@ -294,7 +304,7 @@ export function Navbar() {
                       >
                         {link.label}
                       </Link>
-                    ),
+                    )
                   )}
                 </div>
               </div>
@@ -303,19 +313,23 @@ export function Navbar() {
                   className={`h-10 rounded-lg text-[13px] font-semibold ${
                     isScrolled
                       ? "border border-[#c5d7f8] bg-white text-[#0b124b]"
-                      : "border border-white/40 bg-transparent text-white"
+                      : "border border-white/40 bg-[#eef4ff] text-[#0b124b]"
                   }`}
                 >
                   Contact Sales
                 </Button>
                 <Button
                   asChild
-                  className="h-10 rounded-lg bg-[#2d8cff] text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
+                  className="h-10 rounded-lg bg-[#0b5cff] text-[13px] font-semibold text-white hover:bg-[#084bd8]"
                 >
-                  <Link href="https://preview.zoom.com/en/products/whats-new/">What&apos;s New</Link>
+                  <Link href="https://preview.zoom.com/en/products/whats-new/">
+                    What&apos;s New
+                  </Link>
                 </Button>
-                <div className={`flex items-center gap-2 px-1 text-[13px] font-semibold ${textColor}`}>
-                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
+                <div
+                  className={`flex items-center gap-2 px-1 text-[13px] font-semibold ${textColor}`}
+                >
+                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#0b5cff] text-[12px] font-bold text-white">
                     DU
                   </span>
                   Demo User

@@ -1,15 +1,16 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Pause, Play } from "lucide-react"
 
 const logos = [
-  "Werner",
-  "Moffitt",
-  "ExxonMobil",
-  "Capital One",
-  "The New York Times",
-  "Walmart",
+  { name: "Werner", image: "/trust/wn.jpg" },
+  { name: "Moffitt", image: "/trust/mf.jpg" },
+  { name: "ExxonMobil", image: "/trust/exm.jpg" },
+  { name: "Capital One", image: "/trust/co.jpg" },
+  { name: "The New York Times", image: "/trust/nt.jpg" },
+  { name: "Walmart", image: "/trust/wm.jpg" },
 ]
 
 const ratings = [
@@ -17,19 +18,28 @@ const ratings = [
     score: "4.5/5",
     stars: 4,
     reviews: "out of 7.9k+ reviews",
-    platform: "Gartner\nPeer Insights.",
+    platform: "Gartner Peer Insights",
+    logo: "/trust/gartner-logo.svg",
+    logoWidth: 98,
+    logoHeight: 31,
   },
   {
     score: "4.6/5",
     stars: 4,
     reviews: "out of 54.9k+ reviews",
     platform: "G2",
+    logo: "/trust/g2-logo.svg",
+    logoWidth: 23,
+    logoHeight: 25,
   },
   {
     score: "8.5/10",
     stars: 4,
     reviews: "out of 5.8k+ reviews",
     platform: "TrustRadius",
+    logo: "/trust/tr-logo.svg",
+    logoWidth: 121,
+    logoHeight: 23,
   },
 ]
 
@@ -54,7 +64,7 @@ function Stars({ count }: { count: number }) {
 const marqueeLogos = [...logos, ...logos, ...logos]
 
 export function TrustSection() {
-  const [paused, setPaused] = useState(false)
+  const [isMarqueeHovered, setIsMarqueeHovered] = useState(false)
 
   return (
     <section className="bg-white py-14">
@@ -66,48 +76,58 @@ export function TrustSection() {
       </div>
 
       {/* Marquee row */}
-      <div className="relative mt-8 flex items-center overflow-hidden">
-        {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 z-10 h-full w-32 bg-gradient-to-r from-white to-transparent" />
-        {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 z-10 h-full w-32 bg-gradient-to-l from-white to-transparent" />
-
-        {/* Scrolling track */}
+      <div className="mt-8">
         <div
-          className="flex min-w-full"
-          style={{
-            animation: paused ? "none" : "marquee 28s linear infinite",
-          }}
+          className="relative flex items-center overflow-hidden"
+          onMouseEnter={() => setIsMarqueeHovered(true)}
+          onMouseLeave={() => setIsMarqueeHovered(false)}
         >
-          {marqueeLogos.map((logo, i) => (
-            <div
-              key={i}
-              className="mx-10 flex shrink-0 items-center justify-center"
-            >
-              {/*
-               * Replace this <span> with your actual <img> or <svg> logo.
-               * e.g.: <img src="/logos/exxon.svg" alt={logo} className="h-8 object-contain grayscale" />
-               */}
-              <span className="whitespace-nowrap text-[22px] font-semibold tracking-tight text-black/60">
-                {logo}
-              </span>
-            </div>
-          ))}
+          {/* Left fade */}
+          <div className="pointer-events-none absolute left-0 z-10 h-full w-32 bg-gradient-to-r from-white to-transparent" />
+          {/* Right fade */}
+          <div className="pointer-events-none absolute right-0 z-10 h-full w-32 bg-gradient-to-l from-white to-transparent" />
+
+          {/* Scrolling track */}
+          <div
+            className="flex min-w-full"
+            style={{
+              animation: "marquee 28s linear infinite",
+              animationPlayState: isMarqueeHovered ? "paused" : "running",
+            }}
+          >
+            {marqueeLogos.map((logo, i) => (
+              <div
+                key={`${logo.image}-${i}`}
+                className="mx-8 flex h-16 w-40 shrink-0 items-center justify-center sm:mx-10 sm:h-[76px] sm:w-[180px]"
+              >
+                <Image
+                  src={logo.image}
+                  alt={logo.name}
+                  width={320}
+                  height={152}
+                  className="h-full w-full object-contain"
+                  sizes="180px"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Pause / Play button */}
-        <button
-          type="button"
-          onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? "Play marquee" : "Pause marquee"}
-          className="absolute right-4 z-20 flex size-8 items-center justify-center text-[#2467f4]"
-        >
-          {paused ? (
-            <Play className="size-5 fill-[#2467f4]" />
-          ) : (
-            <Pause className="size-5 fill-[#2467f4]" />
-          )}
-        </button>
+        {/* Pause / Play indicator */}
+        <div className="mx-auto mt-3 flex max-w-[1700px] justify-end px-4 sm:px-6 lg:px-8 xl:px-10">
+          <button
+            type="button"
+            aria-label={isMarqueeHovered ? "Marquee paused" : "Marquee playing"}
+            disabled
+            className="flex size-8 cursor-default items-center justify-center text-[#2467f4]"
+          >
+            {isMarqueeHovered ? (
+              <Play className="size-5 fill-[#2467f4]" />
+            ) : (
+              <Pause className="size-5 fill-[#2467f4]" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Keyframe animation */}
@@ -129,9 +149,13 @@ export function TrustSection() {
               <Stars count={r.stars} />
             </div>
             <p className="mt-1 text-[11px] text-black/45">{r.reviews}</p>
-            <p className="mt-3 text-[13px] font-semibold whitespace-pre-line leading-tight text-black/70">
-              {r.platform}
-            </p>
+            <Image
+              src={r.logo}
+              alt={r.platform}
+              width={r.logoWidth}
+              height={r.logoHeight}
+              className="mt-3 h-8 max-w-[140px] object-contain"
+            />
           </div>
         ))}
       </div>

@@ -90,7 +90,7 @@ export function CustomerStoriesSection() {
         </h2>
 
         <div
-          className="mt-10 flex min-h-[520px] flex-col gap-4 lg:min-h-[560px] lg:flex-row"
+          className="mt-10 flex h-[560px] flex-col gap-4 lg:h-[580px] lg:flex-row"
           onMouseLeave={() => setActiveIndex(0)}
         >
           {stories.map((story, index) => {
@@ -103,10 +103,10 @@ export function CustomerStoriesSection() {
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
-                className={`group relative overflow-hidden rounded-[26px] text-left transition-all duration-500 ease-out focus-visible:ring-2 focus-visible:ring-[#2467f4] focus-visible:outline-none ${
+                className={`group relative overflow-hidden rounded-[26px] text-left transition-all duration-700 ease-in-out focus-visible:ring-2 focus-visible:ring-[#2467f4] focus-visible:outline-none ${
                   expanded
-                    ? "min-h-[460px] flex-[7.5] lg:min-h-full"
-                    : "min-h-[136px] flex-1 lg:min-h-full"
+                    ? "flex-[7.5]"
+                    : "flex-1"
                 }`}
                 style={{
                   backgroundImage: `linear-gradient(90deg, rgba(0, 0, 0, ${
@@ -120,14 +120,14 @@ export function CustomerStoriesSection() {
                 aria-pressed={expanded}
               >
                 <div
-                  className={`absolute inset-0 ${
+                  className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                     expanded
                       ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0)_28%,rgba(0,0,0,0.44)_100%)]"
                       : "bg-[linear-gradient(180deg,rgba(166,172,183,0.34)_0%,rgba(124,131,143,0.22)_50%,rgba(70,76,86,0.46)_100%)]"
                   }`}
                 />
                 {!expanded ? (
-                  <div className="absolute inset-0 bg-[#98a0ad]/28 backdrop-grayscale-[0.45]" />
+                  <div className="absolute inset-0 bg-[#98a0ad]/28 backdrop-grayscale-[0.45] transition-all duration-700 ease-in-out" />
                 ) : null}
 
                 {expanded ? (
@@ -156,7 +156,7 @@ export function CustomerStoriesSection() {
                         </p>
                       </div>
 
-                      <span className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_12px_24px_rgba(36,103,244,0.28)] transition-transform duration-300 group-hover:scale-105">
+                      <span className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_12px_24px_rgba(36,103,244,0.28)] transition-transform duration-700 group-hover:scale-105">
                         <ArrowUpRight className="size-6" />
                       </span>
                     </div>

@@ -46,29 +46,49 @@ function ArrowButton() {
 }
 
 function TallCard({ title, body, image, caption }: NewsCardProps) {
+  const isEmmy = !!caption
+
   return (
-    <article className="relative flex min-h-[540px] flex-col overflow-hidden rounded-[20px] bg-[linear-gradient(160deg,#2f6ef5_0%,#1434c0_100%)] text-white">
+    <article
+      className="relative flex flex-col overflow-hidden rounded-[20px] text-white"
+      style={{
+        background: isEmmy
+          ? "linear-gradient(160deg, #2d5ef0 0%, #1230b8 100%)"
+          : "linear-gradient(160deg, #3068f5 0%, #1840cc 100%)",
+        minHeight: "420px",
+      }}
+    >
       {/* Text content */}
-      <div className="p-6 pb-3">
-        <h3 className="text-[18px] leading-[1.2] font-semibold tracking-[-0.02em]">
+      <div className="p-6 pb-2">
+        <h3 className="text-[19px] leading-[1.2] font-semibold tracking-[-0.02em]">
           {title}
         </h3>
         <p className="mt-3 text-[14px] leading-[1.55] text-white/85">{body}</p>
-        {caption && <p className="mt-3 text-[12px] text-white/50">{caption}</p>}
+        {caption && (
+          <p className="mt-2 text-[11px] text-white/50">{caption}</p>
+        )}
       </div>
 
-      {/* Image area */}
+      {/* Image area — flush to bottom */}
       {image && (
-        <div className="relative mt-auto flex items-end justify-center overflow-hidden px-5">
+        <div
+          className="relative mt-auto flex overflow-hidden"
+          style={isEmmy ? { justifyContent: "center", alignItems: "flex-end", paddingBottom: "56px", paddingLeft: "20px", paddingRight: "20px" } : {}}
+        >
           <img
             src={image.src}
             alt={image.alt}
-            className="w-full max-w-[280px] object-contain"
+            className={
+              isEmmy
+                ? "object-contain"
+                : "w-full object-cover object-top"
+            }
+            style={isEmmy ? { height: "200px", width: "auto" } : {}}
           />
         </div>
       )}
 
-      {/* Arrow */}
+      {/* Arrow pinned bottom-right */}
       <div className="absolute right-5 bottom-5">
         <ArrowButton />
       </div>
@@ -78,7 +98,13 @@ function TallCard({ title, body, image, caption }: NewsCardProps) {
 
 function SmallCard({ title, body }: NewsCardProps) {
   return (
-    <article className="relative flex min-h-[210px] flex-col overflow-hidden rounded-[20px] bg-[linear-gradient(160deg,#2f6ef5_0%,#1434c0_100%)] p-6 text-white">
+    <article
+      className="relative flex flex-1 flex-col overflow-hidden rounded-[20px] p-6 text-white"
+      style={{
+        background: "linear-gradient(160deg, #3570f8 0%, #1a3fd4 100%)",
+        minHeight: "200px",
+      }}
+    >
       <h3 className="max-w-[85%] text-[17px] leading-[1.2] font-semibold tracking-[-0.02em]">
         {title}
       </h3>
@@ -105,15 +131,15 @@ export function NewsSection() {
           Making news, making impact
         </h2>
 
-        {/* Grid */}
+        {/* Grid — 3 equal columns, tall cards left two, small stacked right */}
         <div className="mt-10 grid gap-4 xl:grid-cols-3">
-          {/* Card 1 - tall */}
+          {/* Card 1 - tall, image bleeds to bottom */}
           <TallCard {...newsCards[0]} />
 
-          {/* Card 2 - tall */}
+          {/* Card 2 - tall, Emmy centered */}
           <TallCard {...newsCards[1]} />
 
-          {/* Right column: two small cards stacked */}
+          {/* Right column: two small cards stacked, equal height */}
           <div className="flex flex-col gap-4">
             <SmallCard {...newsCards[2]} />
             <SmallCard {...newsCards[3]} />
