@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {
   ChevronDown,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { createInstantMeeting } from "@/lib/api"
 
 const leftLinks = [
   { label: "Products", hasChevron: true },
@@ -21,19 +23,20 @@ const leftLinks = [
 ]
 
 const rightLinks = [
-  { label: "Sign In", href: "/sign-in" },
   { label: "Support", href: "#" },
 ]
 
 export function Navbar() {
+  const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [meetMenuOpen, setMeetMenuOpen] = useState(false)
+  const [creatingMeeting, setCreatingMeeting] = useState(false)
 
   const meetLinks = [
-    { label: "Join a meeting", href: "/join" },
-    { label: "Host a meeting", href: "/myhome" },
-    { label: "Schedule a meeting", href: "/schedule" },
+    { label: "Join a meeting", href: "/join", host: false },
+    { label: "Host a meeting", href: "/myhome", host: true },
+    { label: "Schedule a meeting", href: "/schedule", host: false },
   ]
 
   useEffect(() => {
@@ -44,8 +47,20 @@ export function Navbar() {
   }, [])
 
   const textColor = isScrolled ? "text-[#0b124b]" : "text-white"
-  const logoColor = isScrolled ? "text-[#2467f4]" : "text-white"
   const aiIconColor = isScrolled ? "text-[#4774ff]" : "text-[#8db0ff]"
+
+  async function hostMeeting() {
+    if (creatingMeeting) return
+    setCreatingMeeting(true)
+    try {
+      const { meeting, participant } = await createInstantMeeting()
+      setMeetMenuOpen(false)
+      setMobileMenuOpen(false)
+      router.push(`/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`)
+    } finally {
+      setCreatingMeeting(false)
+    }
+  }
 
   return (
     <>
@@ -125,16 +140,28 @@ export function Navbar() {
               </button>
               {meetMenuOpen ? (
                 <div className="absolute top-full left-0 mt-1.5 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
-                  {meetLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMeetMenuOpen(false)}
-                      className="block rounded-md px-3 py-2 text-[13px] font-medium text-[#0b124b] transition-colors hover:bg-[#f3f7ff]"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {meetLinks.map((link) =>
+                    link.host ? (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={hostMeeting}
+                        disabled={creatingMeeting}
+                        className="block w-full rounded-md px-3 py-2 text-left text-[13px] font-medium text-[#0b124b] transition-colors hover:bg-[#f3f7ff] disabled:opacity-60"
+                      >
+                        {creatingMeeting ? "Creating meeting..." : link.label}
+                      </button>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        onClick={() => setMeetMenuOpen(false)}
+                        className="block rounded-md px-3 py-2 text-[13px] font-medium text-[#0b124b] transition-colors hover:bg-[#f3f7ff]"
+                      >
+                        {link.label}
+                      </Link>
+                    ),
+                  )}
                 </div>
               ) : null}
             </div>
@@ -149,7 +176,6 @@ export function Navbar() {
               </Link>
             ))}
 
-            {/* Contact Sales */}
             <Button
               className={`ml-1.5 h-9 rounded-lg px-4 text-[13px] font-semibold transition-colors ${
                 isScrolled
@@ -160,13 +186,20 @@ export function Navbar() {
               Contact Sales
             </Button>
 
-            {/* Sign Up Free */}
             <Button
               asChild
               className="h-9 rounded-lg bg-[#2d8cff] px-4 text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
             >
-              <Link href="/sign-up">Sign Up Free</Link>
+              <Link href="https://preview.zoom.com/en/products/whats-new/">What&apos;s New</Link>
             </Button>
+
+            <button
+              type="button"
+              className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white shadow-sm"
+              aria-label="Demo User profile"
+            >
+              DU
+            </button>
 
             {/* Grid / Apps */}
             <button
@@ -187,12 +220,9 @@ export function Navbar() {
             >
               <Search className="size-4 stroke-[2.2]" />
             </button>
-            <Button
-              asChild
-              className="h-9 rounded-lg bg-[#2467f4] px-3.5 text-[13px] font-semibold text-white hover:bg-[#1e57d1]"
-            >
-              <Link href="/sign-up">Sign Up</Link>
-            </Button>
+            <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
+              DU
+            </span>
             <button
               type="button"
               onClick={() => setMobileMenuOpen((v) => !v)}
@@ -245,15 +275,27 @@ export function Navbar() {
               <div className="mt-1 px-3 pb-1">
                 <p className={`mb-1.5 text-xs font-semibold ${textColor}`}>Meet</p>
                 <div className="flex flex-col gap-1">
-                  {meetLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className={`rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {meetLinks.map((link) =>
+                    link.host ? (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={hostMeeting}
+                        disabled={creatingMeeting}
+                        className={`rounded-lg px-3 py-2 text-left text-[13px] font-medium transition-colors hover:bg-white/10 disabled:opacity-60 ${textColor}`}
+                      >
+                        {creatingMeeting ? "Creating meeting..." : link.label}
+                      </button>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className={`rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:bg-white/10 ${textColor}`}
+                      >
+                        {link.label}
+                      </Link>
+                    ),
+                  )}
                 </div>
               </div>
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/10 pt-2.5">
@@ -270,8 +312,14 @@ export function Navbar() {
                   asChild
                   className="h-10 rounded-lg bg-[#2d8cff] text-[13px] font-semibold text-white hover:bg-[#1e7af1]"
                 >
-                  <Link href="/sign-up">Sign Up Free</Link>
+                  <Link href="https://preview.zoom.com/en/products/whats-new/">What&apos;s New</Link>
                 </Button>
+                <div className={`flex items-center gap-2 px-1 text-[13px] font-semibold ${textColor}`}>
+                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
+                    DU
+                  </span>
+                  Demo User
+                </div>
               </div>
             </nav>
           </div>

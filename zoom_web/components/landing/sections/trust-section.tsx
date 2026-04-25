@@ -139,9 +139,9 @@ export function TrustSection() {
       {/* Testimonial */}
       <div className="mx-auto mt-20 max-w-[860px] px-6 text-center">
         <blockquote className="text-2xl font-semibold leading-[1.35] tracking-[-0.02em] text-[#0b124b] lg:text-[32px]">
-          "Zoom Workplace turns my brainwaves into polished gems. From meetings, I can
+          &quot;Zoom Workplace turns my brainwaves into polished gems. From meetings, I can
           create Clips, Notes, Docs, or even whiteboards faster than you can say,
-          &lsquo;transcript.&rsquo;"
+          &lsquo;transcript.&rsquo;&quot;
         </blockquote>
         <div className="mt-6">
           <p className="text-sm font-medium text-black/70">Marquesa Pettway</p>
