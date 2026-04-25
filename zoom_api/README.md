@@ -14,6 +14,11 @@ uvicorn app.main:app --reload --port 8000
 
 The SQLite database is created automatically at `zoom_clone.db`.
 
+## Render Deploy Note
+
+Render may default to preview Python versions that do not have prebuilt wheels for `pydantic-core`.
+This service includes `runtime.txt` and pins Python to `3.12.7` so installs stay on wheels and avoid Rust build failures.
+
 ## Environment
 
 ```bash
