@@ -172,10 +172,12 @@ function MeetingRoomContent() {
   const showChrome = controlsVisible || panelMode !== null
 
   useEffect(() => {
-    if (localVideoRef.current && localStreamRef.current && !screenSharing) {
-      localVideoRef.current.srcObject = localStreamRef.current
-    }
-  }, [loading, meeting, screenSharing])
+    if (!localVideoRef.current) return
+    localVideoRef.current.srcObject =
+      screenSharing && displayStreamRef.current
+        ? displayStreamRef.current
+        : localStreamRef.current
+  }, [cameraOn, loading, meeting, screenSharing])
 
   useEffect(() => {
     showControls()

@@ -20,6 +20,7 @@ import {
   getMeetings,
   type Meeting,
 } from "@/lib/api"
+import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
 
 const quickActions = [
   { label: "New Meeting", href: null, icon: Video, color: "bg-[#ff7424]" },
@@ -226,6 +227,7 @@ export default function MyHomePage() {
           </section>
         </aside>
       </div>
+      <LandingFloatingWidgets />
     </AccountShell>
   )
 }

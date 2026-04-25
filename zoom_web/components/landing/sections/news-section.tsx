@@ -38,7 +38,7 @@ function ArrowButton() {
   return (
     <button
       type="button"
-      className="inline-flex size-10 items-center justify-center rounded-full bg-white text-[#0b124b] shadow-sm transition-transform hover:scale-105"
+      className="inline-flex size-10 items-center justify-center rounded-full bg-white text-[#0b124b] shadow-sm transition-all duration-300 group-hover:bg-[#0b5cff] group-hover:text-white group-hover:shadow-[0_10px_24px_rgba(11,92,255,0.35)] hover:scale-105"
     >
       <ArrowUpRight className="size-4" />
     </button>
@@ -50,7 +50,7 @@ function TallCard({ title, body, image, caption }: NewsCardProps) {
 
   return (
     <article
-      className="relative flex flex-col overflow-hidden rounded-[20px] text-white"
+      className="group relative flex flex-col overflow-hidden rounded-[20px] text-white transition-transform duration-300 ease-out hover:-translate-y-2"
       style={{
         background: isEmmy
           ? "linear-gradient(160deg, #2d5ef0 0%, #1230b8 100%)"
@@ -73,7 +73,7 @@ function TallCard({ title, body, image, caption }: NewsCardProps) {
       {image && (
         <div
           className="relative mt-auto flex overflow-hidden"
-          style={isEmmy ? { justifyContent: "center", alignItems: "flex-end", paddingBottom: "56px", paddingLeft: "20px", paddingRight: "20px" } : {}}
+          style={isEmmy ? { justifyContent: "center", alignItems: "flex-end", paddingBottom: "18px", paddingLeft: "20px", paddingRight: "20px" } : {}}
         >
           <img
             src={image.src}
@@ -99,7 +99,7 @@ function TallCard({ title, body, image, caption }: NewsCardProps) {
 function SmallCard({ title, body }: NewsCardProps) {
   return (
     <article
-      className="relative flex flex-1 flex-col overflow-hidden rounded-[20px] p-6 text-white"
+      className="group relative flex flex-1 flex-col overflow-hidden rounded-[20px] p-6 text-white transition-transform duration-300 ease-out hover:-translate-y-2"
       style={{
         background: "linear-gradient(160deg, #3570f8 0%, #1a3fd4 100%)",
         minHeight: "200px",

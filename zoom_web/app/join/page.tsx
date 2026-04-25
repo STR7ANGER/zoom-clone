@@ -3,9 +3,15 @@
 import Link from "next/link"
 import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Loader2, Video } from "lucide-react"
+import { ChevronDown, Loader2 } from "lucide-react"
 
-import { extractMeetingId, getMeeting, joinMeeting } from "@/lib/api"
+import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
+import {
+  createInstantMeeting,
+  extractMeetingId,
+  getMeeting,
+  joinMeeting,
+} from "@/lib/api"
 
 function JoinContent() {
   const router = useRouter()
@@ -13,6 +19,8 @@ function JoinContent() {
   const [meetingValue, setMeetingValue] = useState(() => searchParams.get("meeting") ?? "")
   const [displayName, setDisplayName] = useState("Demo User")
   const [loading, setLoading] = useState(false)
+  const [creatingMeeting, setCreatingMeeting] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [error, setError] = useState("")
 
   async function handleJoin(event: React.FormEvent<HTMLFormElement>) {
@@ -32,77 +40,141 @@ function JoinContent() {
     }
   }
 
+  async function hostMeeting() {
+    if (creatingMeeting) return
+    setCreatingMeeting(true)
+    setError("")
+    try {
+      const { meeting, participant } = await createInstantMeeting("Demo User")
+      router.push(
+        `/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`,
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to host meeting")
+      setCreatingMeeting(false)
+    }
+  }
+
   return (
-    <main className="flex min-h-screen flex-col overflow-x-hidden bg-white text-[#1f1f1f]">
-      <nav className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-5">
+    <main className="flex min-h-screen flex-col overflow-x-hidden bg-white text-[#232333]">
+      <nav className="fixed top-0 right-0 left-0 z-50 flex h-[61px] items-center justify-between border-b border-[#e8e8ee] bg-white px-[22px]">
         <Link href="/" className="flex items-center" aria-label="Zoom home">
           <img
             src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom@2x.png"
             alt="Zoom"
-            className="h-9 w-auto"
+            className="h-[30px] w-auto"
           />
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-[28px] text-[15px] font-semibold text-[#5d5a78]">
+          <a href="#" className="hover:text-[#0b5cff]">
+            Support
+          </a>
           <Link
-            href="/myhome"
-            className="hidden rounded-full border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 sm:inline-flex"
+            href="/schedule"
+            className="hover:text-[#0b5cff]"
           >
-            My Home
+            Schedule
           </Link>
-          <span className="inline-flex size-9 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
-            DU
-          </span>
+          <Link href="/join" className="hover:text-[#0b5cff]">
+            Join
+          </Link>
+          <button
+            type="button"
+            onClick={hostMeeting}
+            disabled={creatingMeeting}
+            className="font-semibold hover:text-[#0b5cff] disabled:opacity-60"
+          >
+            {creatingMeeting ? "Hosting..." : "Host"}
+          </button>
+          <button type="button" className="inline-flex items-center gap-1 hover:text-[#0b5cff]">
+            Web App <ChevronDown className="size-3.5" />
+          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen((open) => !open)}
+              className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white"
+              aria-label="Demo User menu"
+              aria-expanded={userMenuOpen}
+            >
+              DU
+            </button>
+            {userMenuOpen ? (
+              <div className="absolute right-0 top-[42px] w-[220px] rounded-xl border border-[#e4e6ef] bg-white p-3 text-[#0b124b] shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                <div className="flex items-center gap-3 rounded-lg bg-[#f3f7ff] p-3">
+                  <span className="inline-flex size-10 items-center justify-center rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white">
+                    DU
+                  </span>
+                  <span className="text-[15px] font-bold">Demo User</span>
+                </div>
+                <button
+                  type="button"
+                  className="mt-3 h-10 w-full rounded-lg border border-[#d7dbe8] text-[14px] font-semibold hover:bg-[#f5f7fb]"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </nav>
 
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pt-[65px] py-16">
-        <form onSubmit={handleJoin} className="w-full max-w-md">
-          <div className="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#0b5cff]">
-            <Video className="size-7" />
-          </div>
-          <h1 className="mb-8 text-center text-3xl font-bold text-[#1f1f1f]">Join Meeting</h1>
+      <div className="flex flex-1 flex-col items-center px-6 pt-[168px]">
+        <form onSubmit={handleJoin} className="w-full max-w-[324px]">
+          <h1 className="mb-[40px] text-center text-[24px] font-bold text-[#24272a]">
+            Join Meeting
+          </h1>
 
-          <label className="mb-2 block text-sm text-gray-700">Meeting ID or invite link</label>
+          <label className="mb-[11px] block text-[13.5px] font-medium text-[#252525]">
+            Meeting ID or Personal Link Name
+          </label>
           <input
             type="text"
             value={meetingValue}
             onChange={(event) => setMeetingValue(event.target.value)}
-            placeholder="Enter Meeting ID or paste invite link"
-            className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-gray-800 placeholder-gray-400 focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/20 focus:outline-none"
+            placeholder="Enter Meeting ID or Personal Link Name"
+            className="h-[36px] w-full rounded-[9px] border border-[#aeb4c1] px-4 text-[15px] text-[#232333] placeholder:text-[#74788d] focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/20 focus:outline-none"
           />
 
-          <label className="mb-2 block text-sm text-gray-700">Your display name</label>
+          <label className="mt-4 mb-[11px] block text-[13.5px] font-medium text-[#252525]">
+            Your Name
+          </label>
           <input
             type="text"
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
             placeholder="Enter your name"
-            className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-gray-800 placeholder-gray-400 focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/20 focus:outline-none"
+            className="h-[36px] w-full rounded-[9px] border border-[#aeb4c1] px-4 text-[15px] text-[#232333] placeholder:text-[#74788d] focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/20 focus:outline-none"
           />
 
           {error ? (
-            <p className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+            <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
           ) : null}
-
-          <p className="mb-4 text-sm leading-relaxed text-gray-600">
-            By clicking &quot;Join&quot;, you agree to join this demo meeting as the entered display name.
-          </p>
 
           <button
             disabled={!extractMeetingId(meetingValue) || !displayName.trim() || loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0b5cff] px-4 py-3 text-base font-medium text-white transition-colors hover:bg-[#0a52e8] disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+            className="mt-4 inline-flex h-[35px] w-full items-center justify-center gap-2 rounded-[8px] bg-[#0b5cff] text-[15px] font-medium text-white transition-colors hover:bg-[#0a52e8] disabled:cursor-not-allowed disabled:bg-[#e7e8ee] disabled:text-[#8b8f99]"
           >
             {loading ? <Loader2 className="size-4 animate-spin" /> : null}
             Join
           </button>
         </form>
+
+        <a href="#" className="mt-[67px] text-[13.5px] font-medium text-[#005bff] hover:underline">
+          Join a meeting from an H.323/SIP room system
+        </a>
       </div>
 
-      <footer className="border-t border-gray-100 px-6 py-5">
-        <div className="mx-auto flex max-w-5xl items-center justify-between text-xs text-gray-500">
-          <span>Copyright 2026 Zoom Clone Demo. All rights reserved.</span>
-          <Link href="/schedule" className="text-[#0b5cff] hover:underline">
-            Schedule a meeting
+      <LandingFloatingWidgets />
+
+      <footer className="fixed right-0 bottom-[34px] left-0 px-6">
+        <div className="mx-auto flex max-w-[590px] items-center justify-between gap-8 text-[12px] text-[#5f6368]">
+          <span>© 2026 Zoom Communications, Inc. All rights reserved.</span>
+          <a href="#" className="whitespace-nowrap hover:underline">
+            Privacy & Legal Policies
+          </a>
+          <Link href="#" className="whitespace-nowrap text-[#005bff] hover:underline">
+            English
           </Link>
         </div>
       </footer>

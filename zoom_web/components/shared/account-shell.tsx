@@ -14,12 +14,10 @@ import {
   Edit3,
   ExternalLink,
   FileText,
-  MessageSquare,
   MonitorUp,
   NotebookTabs,
   PanelLeft,
   Search,
-  ShieldCheck,
   ShoppingCart,
   Sparkles,
   Video,
@@ -176,7 +174,7 @@ function AccountHeader() {
             disabled={creatingMeeting}
             className="hidden items-center gap-1 disabled:opacity-60 md:flex"
           >
-            {creatingMeeting ? "Creating..." : "Host"} <ChevronDown className="size-3.5" />
+            {creatingMeeting ? "Creating..." : "Host"}
           </button>
           <a className="hidden items-center gap-1 md:flex" href="#">
             Web App <ChevronDown className="size-3.5" />
@@ -338,20 +336,6 @@ function AccountFooter() {
         </div>
       </footer>
 
-      <button
-        type="button"
-        aria-label="Security"
-        className="fixed bottom-4 left-5 z-40 hidden size-11 items-center justify-center rounded-lg bg-[#64aef1] text-white shadow-[0_6px_18px_rgba(38,117,216,0.28)] lg:inline-flex"
-      >
-        <ShieldCheck className="size-7" />
-      </button>
-      <button
-        type="button"
-        aria-label="Chat"
-        className="fixed right-5 bottom-5 z-40 inline-flex size-13 items-center justify-center rounded-full bg-[#3c80ff] text-white shadow-[0_8px_20px_rgba(38,117,216,0.28)]"
-      >
-        <MessageSquare className="size-6" />
-      </button>
     </>
   )
 }

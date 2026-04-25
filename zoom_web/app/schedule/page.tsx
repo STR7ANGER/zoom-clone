@@ -5,6 +5,7 @@ import { useMemo, useState } from "react"
 import { CalendarDays, ChevronLeft, Copy, Loader2, Plus, TriangleAlert } from "lucide-react"
 
 import { AccountShell } from "@/components/shared/account-shell"
+import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
 import { createScheduledMeeting, type Meeting } from "@/lib/api"
 
 const inputClass =
@@ -176,6 +177,7 @@ export default function SchedulePage() {
           </form>
         </div>
       </div>
+      <LandingFloatingWidgets />
     </AccountShell>
   )
 }

@@ -92,8 +92,7 @@ export function HeroSection() {
               Explore products
             </Button>
             <Button
-              variant="outline"
-              className="h-11 w-full rounded-xl border-[#c0d5ff] bg-white/90 px-8 text-[14px] font-semibold text-[#0b124b] hover:bg-white sm:w-auto sm:text-[15px] lg:h-12 lg:text-[16px]"
+              className="h-11 w-full rounded-xl bg-white px-8 text-[14px] font-semibold text-[#0b124b] sm:w-auto sm:text-[15px] lg:h-12 lg:text-[16px]"
             >
               Find your plan
             </Button>

@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 
@@ -155,16 +155,27 @@ export function WorkTogetherSection() {
     useState<(typeof tabs)[number]>("Collaboration")
   const data = tabData[activeTab]
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveTab((current) => {
+        const currentIndex = tabs.indexOf(current)
+        return tabs[(currentIndex + 1) % tabs.length]
+      })
+    }, 10000)
+
+    return () => window.clearInterval(timer)
+  }, [activeTab])
+
   return (
     <section className="bg-white py-12 sm:py-14 lg:py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-[2.1rem] leading-[1] font-semibold tracking-[-0.04em] text-[#0b124b] sm:text-[3rem] lg:text-[56px]">
             One platform.
             <br />
             Endless ways to work together.
           </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-[14px] leading-relaxed text-[#0b124b] sm:text-[16px] lg:mt-5 lg:text-[18px]">
+          <p className="mx-auto mt-4 max-w-7xl text-[14px] leading-relaxed text-[#0b124b] sm:text-[16px] lg:mt-5 lg:text-[18px]">
             From client pitches to global all-hands, patient consults to
             classrooms, Zoom delivers the flexibility and reliability you need.
             And with AI built in, every interaction is faster, easier, and more
@@ -180,7 +191,7 @@ export function WorkTogetherSection() {
               onClick={() => setActiveTab(tab)}
               className={`rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 sm:px-4 sm:text-[14px] lg:px-5 lg:py-3 lg:text-[15px] ${
                 activeTab === tab
-                  ? "border border-[#b8cdfb] bg-[#eff5ff] text-[#0b124b] shadow-[0_8px_24px_rgba(36,103,244,0.08)]"
+                  ? "border-2 border-[#0b5cff] bg-[#eff5ff] text-[#0b124b] shadow-[0_8px_24px_rgba(36,103,244,0.12)]"
                   : "text-[#0b124b]/55 hover:text-[#0b124b]/80"
               }`}
             >

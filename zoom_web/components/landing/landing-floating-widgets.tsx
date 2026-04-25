@@ -27,14 +27,34 @@ const quickReplies = [
   "Ask a question",
 ]
 
+/* Proper pill toggle matching screenshot */
+function Toggle({ on }: { on: boolean }) {
+  return (
+    <span
+      className={`relative inline-flex h-[28px] w-[50px] shrink-0 items-center rounded-full transition-colors ${
+        on ? "bg-[#3eb56a]" : "bg-[#ccc]"
+      }`}
+    >
+      <span
+        className={`absolute size-[22px] rounded-full bg-white shadow-sm transition-transform ${
+          on ? "translate-x-[24px]" : "translate-x-[3px]"
+        }`}
+      />
+    </span>
+  )
+}
+
 function CookieConsentModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/15 px-3 py-4">
-      <div className="flex max-h-[calc(100vh-24px)] w-full max-w-[520px] flex-col overflow-hidden rounded-[2px] border border-[#b7b7b7] bg-white font-sans text-[#555] shadow-[0_18px_48px_rgba(0,0,0,0.28)]">
-        <div className="flex h-[55px] items-center justify-between border-b border-[#e3e3e3] px-[27px]">
-          <div className="text-[41px] leading-none font-bold tracking-[-0.08em] text-[#0b5cff]">
-            zoom
-          </div>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/20 px-3 py-4">
+      <div className="flex max-h-[calc(100vh-24px)] w-full max-w-[520px] flex-col overflow-hidden rounded-[4px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.32)]">
+        {/* Header */}
+        <div className="flex h-[60px] shrink-0 items-center justify-between px-6">
+          <img
+            src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom@2x.png"
+            alt="Zoom"
+            className="h-[28px] w-auto object-contain"
+          />
           <button
             type="button"
             onClick={onClose}
@@ -45,21 +65,25 @@ function CookieConsentModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        <div className="overflow-y-auto px-[27px] pt-3 pb-2 text-[12.5px] leading-[1.42]">
-          <h2 className="text-[16px] font-bold text-[#646464]">
+        {/* Divider */}
+        <div className="h-px shrink-0 bg-[#e3e3e3]" />
+
+        {/* Scrollable body */}
+        <div className="overflow-y-auto px-6 pt-5 pb-3 text-[13px] leading-[1.5] text-[#444]">
+          <h2 className="text-[17px] font-bold text-[#222]">
             Privacy Preference Center
           </h2>
           <p className="mt-3">
-            Cookies and other similar technologies (&quot;Cookies&quot;) are
-            important to the proper functioning of a site and to provide visitors
-            with a seamless and customized experience. Zoom uses Cookies to
-            enable you to use our site. We also use cookies to enable you to
-            personalize your use of our site, to provide you enhanced
-            functionality and to continually improve the performance of our site.
-            If you have Targeting cookies enabled below and depending on your
-            account type or login state, we may allow third-party advertisers to
-            show you advertising relevant to you on our website or products, using
-            their Cookies on our site.
+            Cookies and other similar technologies (&quot;Cookies&quot;) are important to
+            the proper functioning of a site and to provide visitors with a
+            seamless and customized experience. Zoom uses Cookies to enable you
+            to use our site. We also use cookies to enable you to personalize
+            your use of our site, to provide you enhanced functionality and to
+            continually improve the performance of our site. If you have
+            Targeting cookies enabled below and depending on your account type or
+            login state, we may allow third-party advertisers to show you
+            advertising relevant to you on our website or products, using their
+            Cookies on our site.
           </p>
           <p className="mt-4">
             You can accept or decline all but Strictly Necessary Cookies, or
@@ -73,56 +97,68 @@ function CookieConsentModal({ onClose }: { onClose: () => void }) {
             .
           </p>
           <p className="mt-4">
-            For California Residents, you may exercise your right to &quot;Opt-Out
-            of the Sale/Sharing of Personal Information&quot; by toggling the
-            button labeled &quot;Targeting&quot; below to off.{" "}
+            For California Residents, you may exercise your right to &quot;Opt-Out of
+            the Sale/Sharing of Personal Information&quot; by toggling the button
+            labeled &quot;Targeting&quot; below to off.{" "}
             <a href="#" className="text-[#1d4ed8] underline">
               More information
             </a>
           </p>
 
-          <h3 className="mt-6 text-[16px] font-bold text-[#646464]">
+          <h3 className="mt-6 text-[17px] font-bold text-[#222]">
             Manage Consent Preferences
           </h3>
-          <div className="mt-4 border border-[#d7d7d7]">
-            {consentRows.map((row) => (
+
+          <div className="mt-4 rounded-[2px] border border-[#d0d0d0]">
+            {consentRows.map((row, i) => (
               <div
                 key={row.label}
-                className="flex min-h-[47px] items-center justify-between border-b border-[#d7d7d7] px-3 last:border-b-0"
+                className={`flex min-h-[52px] items-center justify-between px-4 ${
+                  i < consentRows.length - 1 ? "border-b border-[#d0d0d0]" : ""
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex size-5 items-center justify-center text-[20px] leading-none text-[#163b5d]">
+                  <span className="flex size-5 shrink-0 items-center justify-center text-[18px] leading-none font-bold text-[#163b5d]">
                     +
                   </span>
-                  <span className="text-[13px] font-bold text-[#626262]">
+                  <span className="text-[13px] font-bold text-[#333]">
                     {row.label}
                   </span>
                 </div>
                 {"status" in row ? (
-                  <span className="text-[12px] font-bold text-[#2b61d1]">
+                  <span className="shrink-0 text-[12.5px] font-bold text-[#2b61d1]">
                     {row.status}
                   </span>
                 ) : (
-                  <span className="relative h-[21px] w-[38px] rounded-full bg-[#458b58]">
-                    <span className="absolute top-0.5 right-0.5 size-[17px] rounded-full bg-white shadow-sm" />
-                  </span>
+                  <Toggle on={row.enabled ?? false} />
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="border-t border-[#d7d7d7] bg-white px-[27px] pt-[18px] pb-4">
-          <button className="h-[35px] w-full rounded-[2px] bg-[#1f73e8] text-[11px] font-bold tracking-[0.08em] text-white hover:bg-[#1765d3]">
+        {/* Footer buttons */}
+        <div className="shrink-0 border-t border-[#d7d7d7] px-6 pt-5 pb-4">
+          <button
+            type="button"
+            className="h-[42px] w-full rounded-[4px] bg-[#2467f4] text-[13px] font-semibold text-white hover:bg-[#1a57e0] transition-colors"
+          >
             Reject All
           </button>
-          <button className="mt-[18px] h-[39px] w-full rounded-[2px] bg-[#1f73e8] text-[11px] font-bold tracking-[0.22em] text-white hover:bg-[#1765d3]">
-            CONFIRM MY CHOICES
+          <button
+            type="button"
+            className="mt-3 h-[42px] w-full rounded-[4px] bg-[#2467f4] text-[11px] font-bold tracking-[0.18em] text-white hover:bg-[#1a57e0] transition-colors uppercase"
+          >
+            Confirm My Choices
           </button>
-          <div className="mt-3 flex justify-end text-[10px] text-[#333]">
-            Powered by{" "}
-            <span className="ml-1 inline-flex items-center gap-1 font-bold">
-              <span className="inline-block size-3 rounded-full border-[3px] border-black" />
+          <div className="mt-3 flex items-center justify-end gap-1 text-[10.5px] text-[#444]">
+            <span>Powered by</span>
+            <span className="flex items-center gap-1 font-bold text-[#111]">
+              {/* OneTrust logo mark */}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="6" stroke="#111" strokeWidth="2.2" />
+                <path d="M7 3v4l2.5 2" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
               OneTrust
             </span>
           </div>
@@ -132,57 +168,99 @@ function CookieConsentModal({ onClose }: { onClose: () => void }) {
   )
 }
 
+/* Woman avatar SVG — matching the purple/pink illustrated avatar in screenshot */
+function AgentAvatar() {
+  return (
+    <div className="mt-1 size-[37px] shrink-0 overflow-hidden rounded-full bg-[linear-gradient(140deg,#a78bfa,#f9a8d4)]">
+      <svg viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full">
+        {/* Background */}
+        <rect width="37" height="37" fill="url(#avatarGrad)" />
+        <defs>
+          <linearGradient id="avatarGrad" x1="0" y1="0" x2="37" y2="37" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#a78bfa" />
+            <stop offset="1" stopColor="#f9a8d4" />
+          </linearGradient>
+        </defs>
+        {/* Hair */}
+        <ellipse cx="18.5" cy="10" rx="8" ry="8" fill="#4c1d95" />
+        <ellipse cx="18.5" cy="8" rx="6" ry="6" fill="#5b21b6" />
+        {/* Face */}
+        <ellipse cx="18.5" cy="17" rx="6.5" ry="7" fill="#fde8d0" />
+        {/* Hair sides */}
+        <ellipse cx="12.5" cy="16" rx="2.5" ry="5" fill="#5b21b6" />
+        <ellipse cx="24.5" cy="16" rx="2.5" ry="5" fill="#5b21b6" />
+        {/* Eyes */}
+        <ellipse cx="16" cy="16.5" rx="1" ry="1.1" fill="#3b1a08" />
+        <ellipse cx="21" cy="16.5" rx="1" ry="1.1" fill="#3b1a08" />
+        {/* Smile */}
+        <path d="M16.2 20c.6.9 4 .9 4.6 0" stroke="#c47d5a" strokeWidth="0.9" strokeLinecap="round" fill="none" />
+        {/* Shoulders / shirt */}
+        <ellipse cx="18.5" cy="34" rx="10" ry="7" fill="#7c3aed" />
+      </svg>
+    </div>
+  )
+}
+
 function VirtualAgentPanel({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed right-4 bottom-[88px] z-[80] h-[585px] w-[386px] overflow-hidden rounded-[9px] bg-white shadow-[0_20px_55px_rgba(15,23,42,0.28)] max-[430px]:right-3 max-[430px]:left-3 max-[430px]:w-auto">
-      <div className="flex h-[79px] items-center justify-between bg-[linear-gradient(135deg,#1164ff_0%,#bf67d7_100%)] px-[30px] text-white">
-        <div className="flex items-end gap-2">
-          <span className="text-[30px] leading-none font-bold tracking-[-0.08em]">
-            zoom
-          </span>
-          <span className="text-[26px] leading-none font-semibold tracking-[-0.03em]">
+    <div className="fixed right-4 bottom-[76px] z-[80] flex h-[590px] w-[390px] flex-col overflow-hidden rounded-[12px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.30)] max-[430px]:right-3 max-[430px]:left-3 max-[430px]:w-auto">
+      {/* Header */}
+      <div className="flex h-[72px] shrink-0 items-center justify-between bg-[linear-gradient(135deg,#1164ff_0%,#c56de0_100%)] px-7 text-white">
+        <div className="flex items-center gap-2">
+          <img
+            src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom-white@2x.png"
+            alt="Zoom"
+            className="h-[22px] w-auto object-contain"
+          />
+          <span className="text-[22px] font-semibold leading-none tracking-[-0.02em]">
             Virtual Agent
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <MoreHorizontal className="size-5" />
+          <button type="button" aria-label="More options" className="text-white/80 hover:text-white">
+            <MoreHorizontal className="size-5" />
+          </button>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close virtual agent"
-            className="inline-flex size-6 items-center justify-center"
+            className="text-white/80 hover:text-white"
           >
             <X className="size-5" />
           </button>
         </div>
       </div>
 
-      <div className="flex h-[506px] flex-col bg-white">
-        <div className="flex-1 px-[14px] pt-5">
-          <div className="ml-[45px] flex items-center gap-2 text-[10px] font-semibold text-[#111827]">
-            <span>ZVA</span>
-            <span className="rounded-[2px] bg-[#e6e9ee] px-1 py-0.5 text-[8px] text-[#606975]">
+      {/* Chat body */}
+      <div className="flex flex-1 flex-col overflow-hidden bg-white">
+        <div className="flex-1 overflow-y-auto px-4 pt-5 pb-2">
+          {/* Sender meta */}
+          <div className="mb-1 flex items-center gap-2 pl-[45px] text-[10.5px] font-semibold text-[#111827]">
+            <span className="font-bold tracking-wide">ZVA</span>
+            <span className="rounded-[3px] bg-[#e6e9ee] px-[5px] py-[2px] text-[8px] font-semibold text-[#606975]">
               BOT
             </span>
             <span className="font-normal text-[#6f7480]">3:06 AM</span>
           </div>
-          <div className="mt-1 flex items-start gap-2">
-            <div className="mt-1 flex size-[37px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(140deg,#2b7cff,#ffc2a8)] text-[13px] font-bold text-white">
-              Z
-            </div>
-            <div>
-              <div className="rounded-[11px] bg-[#f5f6fb] px-3 py-2 text-[13px] text-[#111827]">
+
+          {/* Message row */}
+          <div className="flex items-start gap-2">
+            <AgentAvatar />
+            <div className="flex flex-col gap-2">
+              <div className="rounded-[14px] rounded-tl-[4px] bg-[#f2f3f8] px-4 py-2.5 text-[13.5px] text-[#111827]">
                 Hi there! I&apos;m Zoom&apos;s Virtual Agent.
               </div>
-              <div className="mt-2 inline-block rounded-[11px] bg-[#f5f6fb] px-3 py-2 text-[13px] text-[#111827]">
+              <div className="inline-block self-start rounded-[14px] rounded-tl-[4px] bg-[#f2f3f8] px-4 py-2.5 text-[13.5px] text-[#111827]">
                 How can I help?
               </div>
-              <div className="mt-2 flex max-w-[285px] flex-wrap gap-7 gap-y-[7px]">
+
+              {/* Quick reply chips — wrap naturally */}
+              <div className="mt-1 flex flex-wrap gap-x-2 gap-y-2">
                 {quickReplies.map((reply) => (
                   <button
                     key={reply}
                     type="button"
-                    className="h-[29px] rounded-full border border-[#2878ff] px-[14px] text-[12.5px] font-bold whitespace-nowrap text-[#2878ff]"
+                    className="h-[32px] rounded-full border border-[#2467f4] px-4 text-[12.5px] font-semibold text-[#2467f4] hover:bg-[#eef3ff] transition-colors whitespace-nowrap"
                   >
                     {reply}
                   </button>
@@ -192,24 +270,25 @@ function VirtualAgentPanel({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
-        <div className="px-[14px] pb-[14px]">
-          <div className="h-[77px] rounded-[15px] border border-[#d9dde7] px-[14px] pt-[11px]">
-            <div className="text-[13px] text-[#777]">Write a message</div>
-            <div className="mt-[22px] flex items-center justify-between">
-              <div className="flex items-center gap-4 text-[#4d5561]">
-                <Paperclip className="size-4" />
-                <Smile className="size-4" />
+        {/* Input area */}
+        <div className="shrink-0 px-4 pb-4">
+          <div className="rounded-[14px] border border-[#d9dde7] bg-white px-4 pt-3 pb-3">
+            <div className="text-[13px] text-[#aaa]">Write a message</div>
+            <div className="mt-5 flex items-center justify-between">
+              <div className="flex items-center gap-4 text-[#5a6070]">
+                <Paperclip className="size-[18px]" />
+                <Smile className="size-[18px]" />
               </div>
               <button
                 type="button"
                 aria-label="Send message"
-                className="inline-flex size-[23px] items-center justify-center rounded-full bg-[#f0f2f5] text-[#c7cbd3]"
+                className="inline-flex size-[26px] items-center justify-center rounded-full border border-[#d0d4de] bg-[#f2f3f8] text-[#c0c5d0]"
               >
                 <ArrowUp className="size-3.5" />
               </button>
             </div>
           </div>
-          <p className="mt-[10px] text-center text-[10.5px] text-[#6d6d6d]">
+          <p className="mt-2 text-center text-[10.5px] text-[#888]">
             Zoom may retain transcripts for training purposes
           </p>
         </div>
@@ -224,6 +303,7 @@ export function LandingFloatingWidgets() {
 
   return (
     <>
+      {/* Cookie settings button — bottom left */}
       <div className="fixed bottom-4 left-4 z-[70]">
         <button
           type="button"
@@ -238,18 +318,20 @@ export function LandingFloatingWidgets() {
         </button>
       </div>
 
+      {/* Virtual agent toggle button — bottom right */}
       <button
         type="button"
         onClick={() => setShowVirtualAgent((open) => !open)}
         aria-label="Open Zoom Virtual Agent"
-        className="fixed right-4 bottom-4 z-[70] flex size-[50px] items-center justify-center rounded-full bg-[#3c7cff] text-white shadow-[0_8px_20px_rgba(38,110,255,0.38)]"
+        className="fixed right-4 bottom-4 z-[70] flex size-[52px] items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_8px_24px_rgba(36,103,244,0.42)]"
       >
-        <MessageCircle className="size-[25px] fill-white stroke-white" />
+        <MessageCircle className="size-[26px] fill-white stroke-white" />
       </button>
 
       {showCookieModal ? (
         <CookieConsentModal onClose={() => setShowCookieModal(false)} />
       ) : null}
+
       {showVirtualAgent ? (
         <VirtualAgentPanel onClose={() => setShowVirtualAgent(false)} />
       ) : null}
