@@ -22,10 +22,10 @@ export function ChatPanel({
   onClose: () => void
 }) {
   return (
-    <aside className="flex w-[560px] shrink-0 flex-col bg-white text-[#232333]">
+    <aside className="absolute inset-y-0 right-0 z-30 flex w-full max-w-[560px] shrink-0 flex-col bg-white text-[#232333] shadow-[-18px_0_42px_rgba(0,0,0,0.26)] lg:relative lg:z-auto lg:shadow-none">
       <div className="relative flex h-14 items-center justify-center border-b border-[#eceff4] px-5">
-        <MessageSquare className="absolute left-5 size-5 text-[#8a9099]" />
-        <h2 className="max-w-[360px] truncate text-xl font-bold">{title}</h2>
+        <MessageSquare className="absolute left-4 size-5 text-[#8a9099] sm:left-5" />
+        <h2 className="max-w-[210px] truncate text-base font-bold sm:max-w-[360px] sm:text-xl">{title}</h2>
         <div className="absolute right-4 flex items-center gap-3 text-[#6b7280]">
           <button type="button" aria-label="Pop out">
             <Copy className="size-5" />
@@ -35,10 +35,10 @@ export function ChatPanel({
           </button>
         </div>
       </div>
-      <div className="px-8 py-5 text-center text-base leading-snug text-[#858891]">
+      <div className="px-4 py-4 text-center text-sm leading-snug text-[#858891] sm:px-8 sm:py-5 sm:text-base">
         Messages addressed to &quot;Meeting Group Chat&quot; will also appear in the meeting group chat in Team Chat
       </div>
-      <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
+      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6">
         {messages.map((message) => (
           <div key={message.id} className={message.from === participantId ? "text-right" : ""}>
             <p className="text-xs font-semibold text-[#6b7280]">{message.fromName}</p>
@@ -54,8 +54,8 @@ export function ChatPanel({
       </div>
       <form onSubmit={onSubmit} className="border-t border-[#eceff4] bg-white">
         <div className="bg-[#f6f7fb] py-2 text-center text-sm text-[#7b8190]">Who can see your messages?</div>
-        <div className="px-4 pt-3 text-lg">
-          to: <span className="rounded-full bg-[#3f7df6] px-4 py-1 text-white">Meeting Group Chat</span>
+        <div className="px-4 pt-3 text-sm sm:text-lg">
+          to: <span className="rounded-full bg-[#3f7df6] px-3 py-1 text-white sm:px-4">Meeting Group Chat</span>
         </div>
         <textarea
           value={chatText}
@@ -67,7 +67,7 @@ export function ChatPanel({
             }
           }}
           placeholder="Type message here ..."
-          className="h-24 w-full resize-none px-4 py-3 text-lg outline-none placeholder:text-[#9299a6]"
+          className="h-24 w-full resize-none px-4 py-3 text-base outline-none placeholder:text-[#9299a6] sm:text-lg"
         />
         <div className="flex items-center justify-between px-4 pb-4 text-[#89909c]">
           <div className="flex items-center gap-5">

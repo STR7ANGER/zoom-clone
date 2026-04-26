@@ -66,22 +66,22 @@ export default function MyHomePage() {
 
   return (
     <AccountShell active="home" className="bg-[#fbfbfd]">
-      <div className="grid min-h-[calc(100vh-94px)] grid-cols-1 gap-5 px-5 py-9 xl:grid-cols-[minmax(0,1fr)_320px] xl:px-7">
+      <div className="grid min-h-[calc(100vh-94px)] grid-cols-1 gap-5 px-3 py-5 sm:px-5 sm:py-9 xl:grid-cols-[minmax(0,1fr)_320px] xl:px-7">
         <div className="space-y-5">
-          <section className="flex flex-col gap-5 rounded-lg bg-white px-6 py-6 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex size-[70px] items-center justify-center overflow-hidden rounded-[18px] bg-[#7b55c7] text-2xl font-bold text-white">
+          <section className="flex flex-col gap-5 rounded-lg bg-white px-4 py-5 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-[16px] bg-[#7b55c7] text-xl font-bold text-white sm:size-[70px] sm:rounded-[18px] sm:text-2xl">
                 {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
               </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-[#10112f]">{user?.name ?? "Your Account"}</h1>
+              <div className="min-w-0">
+                <h1 className="truncate text-xl font-bold tracking-tight text-[#10112f] sm:text-2xl">{user?.name ?? "Your Account"}</h1>
                 <p className="text-[14px] text-[#3f4354]">
                   Plan: <span className="font-semibold text-[#10112f]">Workplace Basic</span>
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link href="/schedule" className="rounded-md border border-[#9aa4b4] px-4 py-2 text-[14px] text-[#24242e]">
+            <div className="flex flex-col gap-2 min-[420px]:flex-row sm:flex-wrap">
+              <Link href="/schedule" className="inline-flex justify-center rounded-md border border-[#9aa4b4] px-4 py-2 text-[14px] text-[#24242e]">
                 Schedule
               </Link>
               <button
@@ -96,10 +96,10 @@ export default function MyHomePage() {
             </div>
           </section>
 
-          <section className="rounded-lg bg-white px-6 py-6 shadow-[0_4px_18px_rgba(15,23,42,0.08)]">
+          <section className="rounded-lg bg-white px-4 py-5 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:px-6 sm:py-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-[#10112f]">Upcoming meetings</h2>
+                <h2 className="text-xl font-bold text-[#10112f] sm:text-2xl">Upcoming meetings</h2>
                 <p className="mt-1 text-[14px] text-[#697089]">Your scheduled and instant meeting links.</p>
               </div>
               <Link href="/schedule" className="text-[14px] font-medium text-[#005bff]">
@@ -123,8 +123,8 @@ export default function MyHomePage() {
             </div>
           </section>
 
-          <section className="rounded-lg bg-white px-6 py-6 shadow-[0_4px_18px_rgba(15,23,42,0.08)]">
-            <h2 className="text-2xl font-bold text-[#10112f]">Recent meetings</h2>
+          <section className="rounded-lg bg-white px-4 py-5 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:px-6 sm:py-6">
+            <h2 className="text-xl font-bold text-[#10112f] sm:text-2xl">Recent meetings</h2>
             <div className="mt-5 space-y-3">
               {recent.length ? (
                 recent.map((meeting) => <MeetingRow key={meeting.meeting_id} meeting={meeting} />)

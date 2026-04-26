@@ -136,7 +136,7 @@ function AccountHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 bg-white text-[#232333]">
-      <div className="flex h-9 items-center justify-end gap-5 bg-[#050522] px-4 text-[13px] font-semibold text-white lg:px-6">
+      <div className="flex h-9 items-center justify-end gap-3 overflow-hidden bg-[#050522] px-3 text-[12px] font-semibold whitespace-nowrap text-white sm:gap-5 sm:px-4 sm:text-[13px] lg:px-6">
         <a className="hidden items-center gap-1.5 md:flex" href="#">
           <Search className="size-4" />
           Search
@@ -148,14 +148,14 @@ function AccountHeader() {
           1.888.799.9666
         </a>
         <span className="hidden h-4 w-px bg-white/35 md:block" />
-        <a href="#">Contact Sales</a>
+        <a className="hidden min-[380px]:block" href="#">Contact Sales</a>
         <a className="hidden sm:block" href="#">
           Request a Demo
         </a>
         <span className="hidden h-4 w-px bg-white/35 sm:block" />
         <ShoppingCart className="size-4" />
       </div>
-      <div className="flex h-[58px] items-center justify-between border-b border-[#e5e7ef] px-5 shadow-[0_1px_4px_rgba(30,41,59,0.06)] lg:px-8">
+      <div className="flex h-[58px] items-center justify-between gap-3 border-b border-[#e5e7ef] px-3 shadow-[0_1px_4px_rgba(30,41,59,0.06)] sm:px-5 lg:px-8">
         <div className="flex items-center gap-8">
           <Link
             href="/"
@@ -174,8 +174,8 @@ function AccountHeader() {
             <a href="#">Plans & Pricing</a>
           </nav>
         </div>
-        <nav className="flex items-center gap-5 text-[14px] font-semibold text-[#5f5d7b] sm:gap-7">
-          <Link href="/schedule">Schedule</Link>
+        <nav className="flex min-w-0 items-center gap-3 text-[13px] font-semibold whitespace-nowrap text-[#5f5d7b] sm:gap-5 sm:text-[14px] lg:gap-7">
+          <Link className="hidden min-[380px]:inline" href="/schedule">Schedule</Link>
           <Link href="/join">Join</Link>
           <button
             type="button"
@@ -188,7 +188,7 @@ function AccountHeader() {
           <a className="hidden items-center gap-1 md:flex" href="#">
             Web App <ChevronDown className="size-3.5" />
           </a>
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => setUserMenuOpen((open) => !open)}
@@ -311,9 +311,9 @@ function AccountSidebar({ active }: { active: AccountPage }) {
 function AccountFooter() {
   return (
     <>
-      <footer className="bg-[#3a3a50] px-5 py-7 text-white lg:px-16">
+      <footer className="bg-[#3a3a50] px-4 py-7 text-white sm:px-5 lg:px-16">
         <div className="mx-auto max-w-[1280px]">
-          <div className="grid gap-9 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_260px]">
+          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_260px]">
             {footerColumns.map((column) => (
               <div key={column.title}>
                 <h2 className="text-[14px] font-bold">{column.title}</h2>

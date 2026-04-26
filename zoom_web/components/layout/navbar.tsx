@@ -261,7 +261,7 @@ export function Navbar() {
       {activeUtility === "apps" ? <div className="absolute top-[82px] right-[58px] z-50 hidden w-[400px] lg:block"><NavbarAppsMenu /></div> : null}
 
       {mobileMenuOpen ? (
-        <div className={`border-t lg:hidden ${isScrolled ? "border-slate-200 bg-white" : "border-white/10 bg-[#07124e]"}`}>
+        <div className={`max-h-[calc(100dvh-66px)] overflow-y-auto border-t lg:hidden ${isScrolled ? "border-slate-200 bg-white" : "border-white/10 bg-[#07124e]"}`}>
           <nav className="flex flex-col px-4 py-2.5">
             {[...leftLinks, { label: "Support", href: "#" }].map((item) => (
               <Link key={item.label} href={"href" in item ? item.href : "#"} className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 ${textColor}`}>

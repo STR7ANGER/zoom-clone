@@ -50,14 +50,14 @@ export function ParticipantTile({
         <img
           src={avatarUrl}
           alt=""
-          className="aspect-square h-[min(38%,150px)] min-h-20 rounded-full object-cover"
+        className="aspect-square h-[min(34%,150px)] min-h-14 rounded-full object-cover sm:min-h-20"
         />
       ) : (
-        <span className="flex aspect-square h-[min(38%,150px)] min-h-20 items-center justify-center bg-[#7959c7] text-[clamp(2.75rem,8vw,5.75rem)] font-light text-white">
+        <span className="flex aspect-square h-[min(34%,150px)] min-h-14 items-center justify-center bg-[#7959c7] text-[clamp(2rem,8vw,5.75rem)] font-light text-white sm:min-h-20">
           {initials(name)}
         </span>
       )}
-      <span className="absolute bottom-2 left-2 rounded bg-black/75 px-2 py-1 text-sm text-white sm:text-base">
+      <span className="absolute bottom-2 left-2 max-w-[calc(100%-16px)] truncate rounded bg-black/75 px-2 py-1 text-xs text-white sm:text-base">
         {muted ? <MicOff className="mr-1 inline size-4 text-[#ff5b5b]" /> : null}
         {name}
         {isHost ? " (Host" : ""}
