@@ -1,20 +1,36 @@
 # Zoom Clone Fullstack Assignment
 
-This repository contains a Zoom-inspired video conferencing demo with a Next.js frontend and FastAPI backend.
+A Zoom-inspired fullstack app with:
+- a `Next.js` frontend (`zoom_web`)
+- a `FastAPI` backend (`zoom_api`)
+- `SQLite` persistence
+- `WebRTC` peer-to-peer media with backend WebSocket signaling
 
-## Tech Stack
+## Repository Layout
 
-- Frontend: Next.js, React, TypeScript, Tailwind CSS, lucide-react
-- Backend: Python, FastAPI, SQLAlchemy, WebSockets
-- Database: SQLite
-- Video: Browser WebRTC peer connections with FastAPI WebSocket signaling
+- `zoom_web`: Next.js 16 app (landing page, auth, dashboard, meeting room)
+- `zoom_api`: FastAPI service (auth, meetings, participants, websocket signaling)
 
-## Project Structure
+## Features
 
-- `zoom_web`: Next.js single page application
-- `zoom_api`: FastAPI backend and SQLite database layer
+- Email/password signup and login
+- Google OAuth login
+- JWT-based API auth from frontend to backend
+- Instant meeting creation and scheduled meetings
+- Invite links and optional email invite notifications
+- Upcoming and recent meeting lists per authenticated user
+- Meeting room with live participant presence, mic/camera toggles, host controls, and WebRTC signaling
 
-## Backend Setup
+## Quick Start
+
+1) Clone and set env files
+
+```bash
+cp zoom_api/.env.example zoom_api/.env
+cp zoom_web/.env.example zoom_web/.env.local
+```
+
+2) Start backend
 
 ```bash
 cd zoom_api
@@ -24,9 +40,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-The backend creates and seeds `zoom_clone.db` automatically on startup.
-
-## Frontend Setup
+3) Start frontend (new terminal)
 
 ```bash
 cd zoom_web
@@ -34,56 +48,43 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+4) Open `http://localhost:3000`
 
 ## Environment Variables
 
-Copy each example file before running locally:
-
-```bash
-cp zoom_api/.env.example zoom_api/.env
-cp zoom_web/.env.example zoom_web/.env.local
-```
-
-Frontend:
+### Frontend (`zoom_web/.env.local`)
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-Backend:
+### Backend (`zoom_api/.env`)
 
 ```bash
 FRONTEND_ORIGIN=http://localhost:3000
 FRONTEND_BASE_URL=http://localhost:3000
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001
 DATABASE_URL=sqlite:///./zoom_clone.db
+
+JWT_SECRET_KEY=replace-with-a-long-random-secret
+JWT_ALGORITHM=HS256
+JWT_EXPIRES_MINUTES=10080
+
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-gmail-address@gmail.com
+SMTP_APP_PASSWORD=your-gmail-app-password
+MAIL_FROM=your-gmail-address@gmail.com
 ```
 
-## Database Schema
+## Notes
 
-- `meetings`: stores meeting ID, title, description, type, status, start time, duration, invite link, host name, and creation time.
-- `participants`: stores participant ID, meeting relationship, display name, role, mute/camera state, join time, and leave time.
-
-The relationship is one meeting to many participants, keyed by the public Zoom-like `meeting_id`.
-
-## Core Workflows
-
-- Dashboard shows upcoming and recent meetings from SQLite.
-- New Meeting creates an instant meeting, generates a unique meeting ID and invite link, and opens the room.
-- Join Meeting accepts a meeting ID or invite link, validates the meeting, asks for a display name, and creates a participant.
-- Schedule Meeting stores title, description, date/time, duration, and generated invite link.
-- Meeting Room supports real camera/mic, WebRTC peer connections, invite copying, participant list, mute/camera toggles, mute all, and participant removal.
-
-## Assumptions
-
-- No authentication is required. The app uses a default demo user named `Demo User` with initials `DU`.
-- WebRTC is implemented for demo/interview scale using direct browser peer connections and a public STUN server.
-- No TURN server is configured, so some restrictive production networks may need extra deployment work.
-
-## Deployment Notes
-
-- Deploy `zoom_web` to Vercel or Netlify and set `NEXT_PUBLIC_API_BASE_URL` to the backend URL.
-- Deploy `zoom_api` to Render, Railway, or another Python host. Set `FRONTEND_ORIGIN`, `FRONTEND_BASE_URL`, and `CORS_ORIGINS` to the deployed frontend URL.
-- Set `DATABASE_URL` on the backend if your host provides a managed database. Leave it unset to use the local SQLite default.
-- Ensure the backend host supports WebSockets.
+- On startup, the backend creates schema and seeds initial meetings if the database is empty.
+- For local development, SQLite works out of the box.
+- WebSockets are required for realtime room events and signaling.
+- For production-grade media reliability, add TURN infrastructure (STUN-only is limited on restrictive networks).

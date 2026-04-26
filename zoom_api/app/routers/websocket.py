@@ -51,6 +51,9 @@ async def meeting_socket(
         while True:
             raw_message = await websocket.receive_text()
             message = json.loads(raw_message)
+            if message.get("type") == "ping":
+                await websocket.send_json({"type": "pong"})
+                continue
             message["from"] = participant_id
             target = message.get("target")
             if target:

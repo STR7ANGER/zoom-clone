@@ -37,6 +37,10 @@ export function MeetingRoomContent() {
   const peersRef = useRef<Record<string, RTCPeerConnection>>({})
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const panelModeRef = useRef<PanelMode>(null)
+  const heartbeatTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const reconnectAttemptsRef = useRef(0)
+  const manualCloseRef = useRef(false)
 
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [participants, setParticipants] = useState<Record<string, Participant>>({})
@@ -105,6 +109,57 @@ export function MeetingRoomContent() {
     if (!participantId) return
     let cancelled = false
 
+    function clearHeartbeat() {
+      if (heartbeatTimerRef.current) {
+        clearInterval(heartbeatTimerRef.current)
+        heartbeatTimerRef.current = null
+      }
+    }
+
+    function clearReconnect() {
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current)
+        reconnectTimerRef.current = null
+      }
+    }
+
+    function startHeartbeat() {
+      clearHeartbeat()
+      heartbeatTimerRef.current = setInterval(() => {
+        if (socketRef.current?.readyState === WebSocket.OPEN) {
+          send({ type: "ping" })
+        }
+      }, 20000)
+    }
+
+    function connectSocket() {
+      clearReconnect()
+      const socket = new WebSocket(`${WS_BASE_URL}/ws/meetings/${meetingId}?participant_id=${participantId}`)
+      socketRef.current = socket
+      socket.onopen = () => {
+        reconnectAttemptsRef.current = 0
+        startHeartbeat()
+      }
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data) as SignalMessage
+        void handleSignal(message)
+      }
+      socket.onclose = () => {
+        clearHeartbeat()
+        if (cancelled || manualCloseRef.current) return
+        const attempts = reconnectAttemptsRef.current + 1
+        reconnectAttemptsRef.current = attempts
+        if (attempts > 5) {
+          setError("Connection lost. Please rejoin the meeting.")
+          return
+        }
+        const delayMs = Math.min(1000 * 2 ** (attempts - 1), 10000)
+        reconnectTimerRef.current = setTimeout(() => {
+          if (!cancelled) connectSocket()
+        }, delayMs)
+      }
+    }
+
     async function start() {
       try {
         const meetingData = await getMeeting(meetingId)
@@ -129,15 +184,7 @@ export function MeetingRoomContent() {
           localVideoRef.current.srcObject = stream
         }
 
-        const socket = new WebSocket(`${WS_BASE_URL}/ws/meetings/${meetingId}?participant_id=${participantId}`)
-        socketRef.current = socket
-        socket.onmessage = (event) => {
-          const message = JSON.parse(event.data) as SignalMessage
-          void handleSignal(message)
-        }
-        socket.onclose = () => {
-          Object.values(peersRef.current).forEach((peer) => peer.close())
-        }
+        connectSocket()
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to open meeting room")
       } finally {
@@ -149,6 +196,9 @@ export function MeetingRoomContent() {
 
     return () => {
       cancelled = true
+      manualCloseRef.current = true
+      clearHeartbeat()
+      clearReconnect()
       socketRef.current?.close()
       localStreamRef.current?.getTracks().forEach((track) => track.stop())
       displayStreamRef.current?.getTracks().forEach((track) => track.stop())
@@ -237,7 +287,13 @@ export function MeetingRoomContent() {
   }
 
   async function handleSignal(message: SignalMessage) {
-    if (message.type === "existing-participants") return
+    if (message.type === "pong") return
+    if (message.type === "existing-participants") {
+      message.participants?.forEach((id) => {
+        if (id !== participantId) createPeer(id, true)
+      })
+      return
+    }
     if (message.type === "participant-joined" && message.participant) {
       setParticipants((current) => ({ ...current, [message.participant!.participant_id]: message.participant! }))
       createPeer(message.participant.participant_id, true)
@@ -343,6 +399,7 @@ export function MeetingRoomContent() {
   }
 
   async function leaveMeeting({ notifyBackend = true } = {}) {
+    manualCloseRef.current = true
     if (notifyBackend && participantId) {
       await updateParticipant(participantId, { left: true }).catch(() => undefined)
     }
