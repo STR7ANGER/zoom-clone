@@ -290,7 +290,7 @@ export function MeetingRoomContent() {
     if (message.type === "pong") return
     if (message.type === "existing-participants") {
       message.participants?.forEach((id) => {
-        if (id !== participantId) createPeer(id, true)
+        if (id !== participantId) createPeer(id, false)
       })
       return
     }
