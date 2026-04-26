@@ -6,14 +6,14 @@ import { useEffect, useRef, useState } from "react"
 import { ChevronDown, Grip, LogOut, Menu, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { NavbarAiDropdown } from "@/components/shared/navbar-ai-dropdown"
-import { NavbarAppsMenu } from "@/components/shared/navbar-apps-menu"
-import { NavbarProductsDropdown } from "@/components/shared/navbar-products-dropdown"
-import { NavbarSearchPopover } from "@/components/shared/navbar-search-popover"
-import { NavbarSolutionsDropdown } from "@/components/shared/navbar-solutions-dropdown"
+import { NavbarAiDropdown } from "@/components/layout/navbar-ai-dropdown"
+import { NavbarAppsMenu } from "@/components/layout/navbar-apps-menu"
+import { NavbarProductsDropdown } from "@/components/layout/navbar-products-dropdown"
+import { NavbarSearchPopover } from "@/components/layout/navbar-search-popover"
+import { NavbarSolutionsDropdown } from "@/components/layout/navbar-solutions-dropdown"
 import { createInstantMeeting } from "@/lib/api"
 import { initials, useAuthStore } from "@/lib/auth-store"
-import aiCompanionIcon from "@/components/shared/ai-companion-icon.svg"
+import aiCompanionIcon from "@/components/layout/ai-companion-icon.svg"
 
 const leftLinks = [
   { label: "Products", hasChevron: true },

@@ -1,6 +1,6 @@
 import { LandingPage } from "@/components/landing/landing"
-import { Footer } from "@/components/shared/footer"
-import { Navbar } from "@/components/shared/navbar"
+import { Footer } from "@/components/layout/footer"
+import { Navbar } from "@/components/layout/navbar"
 
 export default function Page() {
   return (

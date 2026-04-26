@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { CalendarDays, ChevronLeft, Loader2, Plus, X } from "lucide-react"
 import { toast } from "sonner"
 
-import { AccountShell } from "@/components/shared/account-shell"
+import { AccountShell } from "@/components/layout/account-shell"
 import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
 import { createScheduledMeeting } from "@/lib/api"
 
