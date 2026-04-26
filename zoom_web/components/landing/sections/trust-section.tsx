@@ -67,7 +67,7 @@ export function TrustSection() {
   const [isMarqueeHovered, setIsMarqueeHovered] = useState(false)
 
   return (
-    <section className="bg-white py-14">
+    <section className="bg-white py-12 sm:py-14">
       {/* Heading */}
       <div className="text-center">
         <h2 className="text-lg font-semibold tracking-[-0.01em] text-[#0b124b]">
@@ -83,9 +83,9 @@ export function TrustSection() {
           onMouseLeave={() => setIsMarqueeHovered(false)}
         >
           {/* Left fade */}
-          <div className="pointer-events-none absolute left-0 z-10 h-full w-32 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute left-0 z-10 h-full w-12 bg-gradient-to-r from-white to-transparent sm:w-32" />
           {/* Right fade */}
-          <div className="pointer-events-none absolute right-0 z-10 h-full w-32 bg-gradient-to-l from-white to-transparent" />
+          <div className="pointer-events-none absolute right-0 z-10 h-full w-12 bg-gradient-to-l from-white to-transparent sm:w-32" />
 
           {/* Scrolling track */}
           <div
@@ -98,7 +98,7 @@ export function TrustSection() {
             {marqueeLogos.map((logo, i) => (
               <div
                 key={`${logo.image}-${i}`}
-                className="mx-8 flex h-16 w-40 shrink-0 items-center justify-center sm:mx-10 sm:h-[76px] sm:w-[180px]"
+                className="mx-5 flex h-14 w-32 shrink-0 items-center justify-center sm:mx-10 sm:h-[76px] sm:w-[180px]"
               >
                 <Image
                   src={logo.image}
@@ -139,10 +139,10 @@ export function TrustSection() {
       `}</style>
 
       {/* Ratings row */}
-      <div className="mx-auto mt-16 flex max-w-[860px] items-start justify-center divide-x divide-black/10">
+      <div className="mx-auto mt-12 flex max-w-[860px] flex-col items-stretch justify-center divide-y divide-black/10 px-6 sm:mt-16 sm:flex-row sm:items-start sm:divide-x sm:divide-y-0">
         {ratings.map((r) => (
-          <div key={r.score} className="flex flex-1 flex-col items-center px-10 text-center">
-            <span className="text-4xl font-semibold tracking-tight text-[#0b124b]">
+          <div key={r.score} className="flex flex-1 flex-col items-center px-4 py-6 text-center sm:px-6 sm:py-0 lg:px-10">
+            <span className="text-3xl font-semibold tracking-tight text-[#0b124b] sm:text-4xl">
               {r.score}
             </span>
             <div className="mt-2">
@@ -161,8 +161,8 @@ export function TrustSection() {
       </div>
 
       {/* Testimonial */}
-      <div className="mx-auto mt-20 max-w-[860px] px-6 text-center">
-        <blockquote className="text-2xl font-semibold leading-[1.35] tracking-[-0.02em] text-[#0b124b] lg:text-[32px]">
+      <div className="mx-auto mt-14 max-w-[860px] px-6 text-center sm:mt-20">
+        <blockquote className="text-[22px] font-semibold leading-[1.35] tracking-[-0.02em] text-[#0b124b] sm:text-2xl lg:text-[32px]">
           &quot;Zoom Workplace turns my brainwaves into polished gems. From meetings, I can
           create Clips, Notes, Docs, or even whiteboards faster than you can say,
           &lsquo;transcript.&rsquo;&quot;

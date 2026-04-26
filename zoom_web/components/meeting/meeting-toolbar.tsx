@@ -57,15 +57,15 @@ export function MeetingToolbar({
 }) {
   return (
     <footer
-      className={`flex items-center justify-between bg-black px-7 transition-[height,opacity] duration-200 ${
-        showChrome ? "h-[66px] overflow-visible opacity-100" : "h-0 overflow-hidden opacity-0"
+      className={`flex items-center gap-3 bg-black px-2 transition-[height,opacity] duration-200 sm:justify-between sm:px-4 lg:px-7 ${
+        showChrome ? "h-[74px] overflow-visible opacity-100 sm:h-[66px]" : "h-0 overflow-hidden opacity-0"
       }`}
     >
-      <div className="flex min-w-[240px] items-center gap-8">
+      <div className="flex shrink-0 items-center gap-2 sm:min-w-[180px] sm:gap-4 lg:min-w-[240px] lg:gap-8">
         <ToolButton active={muted} icon={muted ? MicOff : Mic} label={muted ? "Unmute" : "Mute"} onClick={onToggleMute} danger={muted} />
         <ToolButton active={!cameraOn} icon={cameraOn ? Video : VideoOff} label="Video" onClick={onToggleCamera} danger={!cameraOn} />
       </div>
-      <div className="flex items-center gap-7">
+      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto px-1 sm:justify-center sm:gap-3 lg:gap-7">
         <ToolButton
           active={panelMode === "participants"}
           icon={Users}
@@ -91,7 +91,7 @@ export function MeetingToolbar({
         <ToolButton icon={Sparkles} label="AI Companion" onClick={() => undefined} />
         <ToolButton icon={MoreHorizontal} label="More" onClick={() => undefined} />
       </div>
-      <div className="flex min-w-[160px] justify-end">
+      <div className="flex shrink-0 justify-end sm:min-w-[96px] lg:min-w-[160px]">
         {isHost ? (
           <div className="relative">
             {endMenuOpen ? (

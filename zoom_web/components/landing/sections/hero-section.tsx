@@ -10,7 +10,7 @@ function PromoBar({ onClose }: { onClose: () => void }) {
   return (
     <div className="w-full px-4 py-2.5 sm:px-6">
       <div
-        className="relative mx-auto flex max-w-[1500px] items-center justify-center rounded-md px-10 py-2 sm:px-12 sm:py-2.5"
+        className="relative mx-auto flex max-w-[1500px] items-center justify-center rounded-md px-9 py-2 sm:px-12 sm:py-2.5"
         style={{
           background:
             "linear-gradient(180deg, rgba(107,114,128,0.45) 0%, rgba(75,85,99,0.4) 100%)",
@@ -18,8 +18,8 @@ function PromoBar({ onClose }: { onClose: () => void }) {
             "inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 4px rgba(15,23,42,0.16)",
         }}
       >
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
-          <p className="text-[12px] font-medium text-white/90 sm:text-[12.5px]">
+        <div className="flex min-w-0 flex-col items-center gap-2 text-center min-[420px]:flex-row min-[420px]:gap-2.5 sm:gap-3.5">
+          <p className="text-[11.5px] leading-snug font-medium text-balance text-white/90 sm:text-[12.5px]">
             Join the Zoom Scale-UP Summit EMEA - grow with AI tools
           </p>
           <button
@@ -62,7 +62,7 @@ export function HeroSection() {
         </div>
 
         {/* Hero copy */}
-        <div className="mx-auto max-w-[1120px] px-4 pt-10 pb-28 text-center sm:pt-12 sm:pb-32 lg:pt-14 lg:pb-36">
+        <div className="mx-auto max-w-[1120px] px-4 pt-8 pb-24 text-center sm:pt-12 sm:pb-32 lg:pt-14 lg:pb-36">
           <h1
             className="mx-auto max-w-[880px] font-semibold tracking-tight text-white"
             style={{
@@ -101,7 +101,7 @@ export function HeroSection() {
       </div>
 
       {/* Carousel overlaps the gradient bottom */}
-      <div className="-mt-20 sm:-mt-24 lg:-mt-28">
+      <div className="-mt-16 sm:-mt-24 lg:-mt-28">
         <ProductHighlightSection />
       </div>
     </section>

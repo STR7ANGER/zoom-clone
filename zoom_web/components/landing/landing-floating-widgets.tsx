@@ -203,16 +203,16 @@ function AgentAvatar() {
 
 function VirtualAgentPanel({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed right-4 bottom-[76px] z-[80] flex h-[590px] w-[390px] flex-col overflow-hidden rounded-[12px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.30)] max-[430px]:right-3 max-[430px]:left-3 max-[430px]:w-auto">
+    <div className="fixed right-3 bottom-[76px] left-3 z-[80] flex h-[min(590px,calc(100dvh-96px))] flex-col overflow-hidden rounded-[12px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.30)] sm:right-4 sm:left-auto sm:w-[390px]">
       {/* Header */}
-      <div className="flex h-[72px] shrink-0 items-center justify-between bg-[linear-gradient(135deg,#1164ff_0%,#c56de0_100%)] px-7 text-white">
+      <div className="flex h-[64px] shrink-0 items-center justify-between bg-[linear-gradient(135deg,#1164ff_0%,#c56de0_100%)] px-4 text-white sm:h-[72px] sm:px-7">
         <div className="flex items-center gap-2">
           <img
             src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom-white@2x.png"
             alt="Zoom"
             className="h-[22px] w-auto object-contain"
           />
-          <span className="text-[22px] font-semibold leading-none tracking-[-0.02em]">
+          <span className="text-[18px] font-semibold leading-none tracking-[-0.02em] sm:text-[22px]">
             Virtual Agent
           </span>
         </div>
@@ -260,7 +260,7 @@ function VirtualAgentPanel({ onClose }: { onClose: () => void }) {
                   <button
                     key={reply}
                     type="button"
-                    className="h-[32px] rounded-full border border-[#2467f4] px-4 text-[12.5px] font-semibold text-[#2467f4] hover:bg-[#eef3ff] transition-colors whitespace-nowrap"
+                    className="min-h-[32px] rounded-full border border-[#2467f4] px-3 py-1 text-[12px] font-semibold text-[#2467f4] transition-colors hover:bg-[#eef3ff] sm:px-4 sm:text-[12.5px]"
                   >
                     {reply}
                   </button>
@@ -304,14 +304,14 @@ export function LandingFloatingWidgets() {
   return (
     <>
       {/* Cookie settings button — bottom left */}
-      <div className="fixed bottom-4 left-4 z-[70]">
+      <div className="fixed bottom-3 left-3 z-[70] sm:bottom-4 sm:left-4">
         <button
           type="button"
           onClick={() => setShowCookieModal(true)}
           aria-label="Cookie settings"
-          className="group relative flex size-[54px] items-center justify-center rounded-full border-[3px] border-white bg-[#6cc44f] text-white shadow-[0_4px_16px_rgba(0,0,0,0.22)]"
+          className="group relative flex size-[46px] items-center justify-center rounded-full border-[3px] border-white bg-[#6cc44f] text-white shadow-[0_4px_16px_rgba(0,0,0,0.22)] sm:size-[54px]"
         >
-          <Cookie className="size-7" />
+          <Cookie className="size-6 sm:size-7" />
           <span className="pointer-events-none absolute left-[62px] top-1/2 -translate-y-1/2 translate-x-2 rounded-md bg-[#1f2937] px-3 py-1.5 text-[12px] font-semibold whitespace-nowrap text-white opacity-0 shadow-lg transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
             Cookie Settings
           </span>
@@ -323,7 +323,7 @@ export function LandingFloatingWidgets() {
         type="button"
         onClick={() => setShowVirtualAgent((open) => !open)}
         aria-label="Open Zoom Virtual Agent"
-        className="fixed right-4 bottom-4 z-[70] flex size-[52px] items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_8px_24px_rgba(36,103,244,0.42)]"
+        className="fixed right-3 bottom-3 z-[70] flex size-[48px] items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_8px_24px_rgba(36,103,244,0.42)] sm:right-4 sm:bottom-4 sm:size-[52px]"
       >
         <MessageCircle className="size-[26px] fill-white stroke-white" />
       </button>

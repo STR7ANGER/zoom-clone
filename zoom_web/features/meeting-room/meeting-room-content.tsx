@@ -71,12 +71,12 @@ export function MeetingRoomContent() {
     tileCount <= 1
       ? "grid-cols-1 grid-rows-1"
       : tileCount === 2
-        ? "grid-cols-2 grid-rows-1"
+        ? "grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1"
         : tileCount <= 4
-          ? "grid-cols-2 grid-rows-2"
+          ? "grid-cols-1 grid-rows-4 sm:grid-cols-2 sm:grid-rows-2"
           : tileCount <= 6
-            ? "grid-cols-3 grid-rows-2"
-            : "grid-cols-3 grid-rows-3"
+            ? "grid-cols-2 grid-rows-3 md:grid-cols-3 md:grid-rows-2"
+            : "grid-cols-2 grid-rows-5 md:grid-cols-3 md:grid-rows-3"
   const showChrome = controlsVisible || panelMode !== null
   useEffect(() => {
     if (!localVideoRef.current) return
@@ -419,7 +419,7 @@ export function MeetingRoomContent() {
   }
 
   return (
-    <main onMouseMove={showControls} className="flex h-screen overflow-hidden bg-[#1b1b1b] text-white">
+    <main onMouseMove={showControls} className="relative flex h-dvh overflow-hidden bg-[#1b1b1b] text-white">
       <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <MeetingHeader showChrome={showChrome} inviteLink={inviteLink} />
         <div className="min-h-0 flex-1 bg-[#111] p-1">

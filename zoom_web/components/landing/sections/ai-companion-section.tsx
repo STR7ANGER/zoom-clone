@@ -44,7 +44,6 @@ export function AiCompanionSection() {
                 muted
                 loop
                 playsInline
-                controls
               >
                 Your browser does not support the video tag.
               </video>

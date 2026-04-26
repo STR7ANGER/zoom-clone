@@ -80,7 +80,7 @@ export function AuthScreen({ mode, nextPath, children }: AuthScreenProps) {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white text-[#232333]">
+    <main className="min-h-screen overflow-x-hidden bg-white text-[#232333]">
       <header className="fixed inset-x-0 top-0 z-20 flex h-[58px] items-center justify-between border-b border-[#e8e8ee] bg-white px-6 sm:px-12">
         <Link href="/" className="flex items-center" aria-label="Zoom home">
           <img
@@ -89,7 +89,7 @@ export function AuthScreen({ mode, nextPath, children }: AuthScreenProps) {
             className="h-[30px] w-auto"
           />
         </Link>
-        <nav className="flex items-center gap-4 text-[14px] font-medium sm:gap-6">
+        <nav className="flex items-center gap-3 text-[13px] font-medium sm:gap-6 sm:text-[14px]">
           <span className="hidden text-[#1f2330] sm:inline">
             {isSignup ? "Already have an account?" : "New to Zoom?"}{" "}
             <Link className="text-[#005bff]" href={isSignup ? "/signin" : "/signup"}>
@@ -101,7 +101,7 @@ export function AuthScreen({ mode, nextPath, children }: AuthScreenProps) {
         </nav>
       </header>
 
-      <div className={`grid h-screen pt-[58px] ${gridClass} lg:overflow-hidden`}>
+      <div className={`grid min-h-screen pt-[58px] ${gridClass} lg:h-screen lg:overflow-hidden`}>
         <section className="relative hidden items-center justify-center bg-[#f7f8fa] lg:flex">
           {isSignup ? (
             <div className="relative flex h-full w-full items-center justify-center">
@@ -153,16 +153,16 @@ export function AuthScreen({ mode, nextPath, children }: AuthScreenProps) {
               <span className="h-px flex-1 bg-[#e4e7ee]" />
             </div>
 
-            <div className="mt-5 grid grid-cols-5 gap-5">
+            <div className="mt-5 grid grid-cols-5 gap-2 min-[380px]:gap-4 sm:gap-5">
               {providers.map((provider) => (
                 <button
                   key={provider.label}
                   type="button"
                   onClick={provider.disabled ? undefined : handleGoogle}
                   disabled={provider.disabled}
-                  className="group flex flex-col items-center gap-2 text-[13px] font-medium text-[#646c7a] disabled:cursor-not-allowed disabled:opacity-100"
+                  className="group flex min-w-0 flex-col items-center gap-2 text-[12px] font-medium text-[#646c7a] disabled:cursor-not-allowed disabled:opacity-100 sm:text-[13px]"
                 >
-                  <span className="flex size-11 items-center justify-center rounded-xl border border-[#cfd6e0] bg-[#f5f6f8] transition group-hover:border-[#b8c2d1]">
+                  <span className="flex size-10 items-center justify-center rounded-xl border border-[#cfd6e0] bg-[#f5f6f8] transition group-hover:border-[#b8c2d1] sm:size-11">
                     {provider.mark}
                   </span>
                   <span>{provider.label}</span>

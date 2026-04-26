@@ -68,7 +68,7 @@ function JoinContent() {
 
   return (
     <main className="flex min-h-screen flex-col overflow-x-hidden bg-white text-[#232333]">
-      <nav className="fixed top-0 right-0 left-0 z-50 flex h-[61px] items-center justify-between border-b border-[#e8e8ee] bg-white px-[22px]">
+      <nav className="fixed top-0 right-0 left-0 z-50 flex h-[61px] items-center justify-between gap-3 border-b border-[#e8e8ee] bg-white px-4 sm:px-[22px]">
         <Link href="/" className="flex items-center" aria-label="Zoom home">
           <img
             src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom@2x.png"
@@ -76,8 +76,8 @@ function JoinContent() {
             className="h-[30px] w-auto"
           />
         </Link>
-        <div className="flex items-center gap-[28px] text-[15px] font-semibold text-[#5d5a78]">
-          <a href="#" className="hover:text-[#0b5cff]">
+        <div className="flex min-w-0 items-center gap-3 text-[13px] font-semibold whitespace-nowrap text-[#5d5a78] sm:gap-5 sm:text-[15px] lg:gap-[28px]">
+          <a href="#" className="hidden hover:text-[#0b5cff] sm:inline">
             Support
           </a>
           <Link
@@ -88,7 +88,7 @@ function JoinContent() {
                 router.push("/signin?next=/schedule")
               }
             }}
-            className="hover:text-[#0b5cff]"
+            className="hidden hover:text-[#0b5cff] min-[430px]:inline"
           >
             Schedule
           </Link>
@@ -99,11 +99,11 @@ function JoinContent() {
             type="button"
             onClick={hostMeeting}
             disabled={creatingMeeting}
-            className="font-semibold hover:text-[#0b5cff] disabled:opacity-60"
+            className="hidden font-semibold hover:text-[#0b5cff] disabled:opacity-60 sm:inline"
           >
             {creatingMeeting ? "Hosting..." : "Host"}
           </button>
-          <button type="button" className="inline-flex items-center gap-1 hover:text-[#0b5cff]">
+          <button type="button" className="hidden items-center gap-1 hover:text-[#0b5cff] md:inline-flex">
             Web App <ChevronDown className="size-3.5" />
           </button>
           {isSignedIn ? (
@@ -141,13 +141,13 @@ function JoinContent() {
           ) : (
             <>
               <Link href="/signin" className="hover:text-[#0b5cff]">Sign In</Link>
-              <Link href="/signup" className="rounded-md bg-[#0b5cff] px-3 py-1.5 text-white hover:bg-[#084bd8]">Sign Up Free</Link>
+              <Link href="/signup" className="hidden rounded-md bg-[#0b5cff] px-3 py-1.5 text-white hover:bg-[#084bd8] sm:inline">Sign Up Free</Link>
             </>
           )}
         </div>
       </nav>
 
-      <div className="flex flex-1 flex-col items-center px-6 pt-[168px]">
+      <div className="flex flex-1 flex-col items-center px-4 pt-[128px] sm:px-6 sm:pt-[168px]">
         <form onSubmit={handleJoin} className="w-full max-w-[324px]">
           <h1 className="mb-[40px] text-center text-[24px] font-bold text-[#24272a]">
             Join Meeting
@@ -191,15 +191,15 @@ function JoinContent() {
           </button>
         </form>
 
-        <a href="#" className="mt-[67px] text-[13.5px] font-medium text-[#005bff] hover:underline">
+        <a href="#" className="mt-12 text-center text-[13.5px] font-medium text-[#005bff] hover:underline sm:mt-[67px]">
           Join a meeting from an H.323/SIP room system
         </a>
       </div>
 
       <LandingFloatingWidgets />
 
-      <footer className="fixed right-0 bottom-[34px] left-0 px-6">
-        <div className="mx-auto flex max-w-[590px] items-center justify-between gap-8 text-[12px] text-[#5f6368]">
+      <footer className="static px-4 py-6 sm:fixed sm:right-0 sm:bottom-[34px] sm:left-0 sm:px-6 sm:py-0">
+        <div className="mx-auto flex max-w-[590px] flex-col items-center justify-between gap-2 text-center text-[12px] text-[#5f6368] sm:flex-row sm:gap-8 sm:text-left">
           <span>© 2026 Zoom Communications, Inc. All rights reserved.</span>
           <a href="#" className="whitespace-nowrap hover:underline">
             Privacy & Legal Policies

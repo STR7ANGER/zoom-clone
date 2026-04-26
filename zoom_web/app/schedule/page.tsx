@@ -96,7 +96,7 @@ export default function SchedulePage() {
 
   return (
     <AccountShell active="meetings">
-      <div className="min-h-[calc(100vh-94px)] px-5 py-7 lg:px-7">
+      <div className="min-h-[calc(100vh-94px)] px-3 py-5 sm:px-5 sm:py-7 lg:px-7">
         <div className="max-w-[895px]">
           <Link className="inline-flex items-center gap-1 text-[14px] font-medium text-[#005bff]" href="/myhome">
             <ChevronLeft className="size-4" />
@@ -110,7 +110,7 @@ export default function SchedulePage() {
             <h1 className="text-xl font-bold text-[#232333]">Schedule Meeting</h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-7 space-y-5 rounded-lg bg-white p-6 shadow-[0_4px_18px_rgba(15,23,42,0.08)]">
+          <form onSubmit={handleSubmit} className="mt-7 space-y-5 rounded-lg bg-white p-4 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:p-6">
             <Row label="Topic" required>
               <input className={`${inputClass} w-full max-w-[520px]`} value={title} onChange={(event) => setTitle(event.target.value)} />
             </Row>
@@ -126,14 +126,14 @@ export default function SchedulePage() {
 
             <Row label="When" required>
               <div className="flex flex-wrap items-center gap-2">
-                <input className={`${inputClass} w-[180px]`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
-                <input className={`${inputClass} w-[140px]`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
+                <input className={`${inputClass} w-full sm:w-[180px]`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+                <input className={`${inputClass} w-full sm:w-[140px]`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
               </div>
             </Row>
 
             <Row label="Duration" required>
               <select
-                className={`${inputClass} w-[180px]`}
+                className={`${inputClass} w-full sm:w-[180px]`}
                 value={duration}
                 onChange={(event) => setDuration(Number(event.target.value))}
               >
@@ -194,15 +194,15 @@ export default function SchedulePage() {
               <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:ml-[145px]">{error}</div>
             ) : null}
 
-            <div className="flex gap-2 pt-1 sm:pl-[145px]">
+            <div className="flex flex-col gap-2 pt-1 min-[420px]:flex-row sm:pl-[145px]">
               <button
                 disabled={!title.trim() || !startsAt || loading}
-                className="inline-flex items-center gap-2 rounded-md bg-[#0b5cff] px-4 py-2 text-[14px] font-semibold text-white disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#0b5cff] px-4 py-2 text-[14px] font-semibold text-white disabled:opacity-60"
               >
                 {loading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
                 Save
               </button>
-              <Link href="/myhome" className="rounded-md border border-[#9aa4b4] px-4 py-2 text-[14px]">
+              <Link href="/myhome" className="inline-flex justify-center rounded-md border border-[#9aa4b4] px-4 py-2 text-[14px]">
                 Cancel
               </Link>
             </div>

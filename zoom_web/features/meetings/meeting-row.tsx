@@ -10,16 +10,16 @@ export function MeetingRow({ meeting }: { meeting: Meeting }) {
     <div className="flex flex-col gap-3 rounded-md border border-[#e7eaf2] bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <p className="truncate text-[15px] font-semibold text-[#232333]">{meeting.title}</p>
-        <p className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-[#697089]">
+        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[#697089]">
           <Clock className="size-3.5" />
           {formatMeetingTime(meeting.starts_at)}
-          <span>•</span>
+          <span className="hidden min-[420px]:inline">•</span>
           <span>{meeting.duration_minutes} min</span>
-          <span>•</span>
-          <span>ID {meeting.meeting_id}</span>
+          <span className="hidden min-[420px]:inline">•</span>
+          <span className="max-w-full truncate">ID {meeting.meeting_id}</span>
         </p>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center justify-end gap-2">
         <button
           type="button"
           onClick={() => navigator.clipboard.writeText(meeting.invite_link)}

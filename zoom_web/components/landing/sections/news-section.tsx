@@ -55,7 +55,7 @@ function TallCard({ title, body, image, caption }: NewsCardProps) {
         background: isEmmy
           ? "linear-gradient(160deg, #2d5ef0 0%, #1230b8 100%)"
           : "linear-gradient(160deg, #3068f5 0%, #1840cc 100%)",
-        minHeight: "420px",
+        minHeight: "min(420px, calc(100vw - 48px))",
       }}
     >
       {/* Text content */}
@@ -118,8 +118,8 @@ function SmallCard({ title, body }: NewsCardProps) {
 
 export function NewsSection() {
   return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
+    <section className="bg-white py-12 sm:py-16">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
         {/* Label */}
         <div className="mb-5 flex items-center justify-center gap-2.5 text-[14px] font-medium text-[#2467f4]">
           <span className="size-2 rounded-full bg-[#2467f4]" />
@@ -127,12 +127,12 @@ export function NewsSection() {
         </div>
 
         {/* Heading */}
-        <h2 className="mx-auto max-w-[760px] text-center text-[2.1rem] leading-[1.02] font-semibold tracking-[-0.03em] text-[#0b124b] lg:text-[54px]">
+        <h2 className="mx-auto max-w-[760px] text-center text-[2rem] leading-[1.02] font-semibold tracking-[-0.03em] text-[#0b124b] sm:text-[2.6rem] lg:text-[54px]">
           Making news, making impact
         </h2>
 
         {/* Grid — 3 equal columns, tall cards left two, small stacked right */}
-        <div className="mt-10 grid gap-4 xl:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:mt-10 xl:grid-cols-3">
           {/* Card 1 - tall, image bleeds to bottom */}
           <TallCard {...newsCards[0]} />
 
@@ -140,7 +140,7 @@ export function NewsSection() {
           <TallCard {...newsCards[1]} />
 
           {/* Right column: two small cards stacked, equal height */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:col-span-2 xl:col-span-1">
             <SmallCard {...newsCards[2]} />
             <SmallCard {...newsCards[3]} />
           </div>

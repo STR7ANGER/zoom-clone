@@ -78,19 +78,19 @@ export function CustomerStoriesSection() {
   const [activeIndex, setActiveIndex] = useState(0)
 
   return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
+    <section className="bg-white py-12 sm:py-16">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <div className="mb-6 flex items-center justify-center gap-2.5 text-[15px] font-medium text-[#2467f4]">
           <span className="size-3 rounded-full bg-[#2467f4] shadow-[0_0_0_6px_rgba(36,103,244,0.08)]" />
           <span>Customer stories</span>
         </div>
 
-        <h2 className="mx-auto max-w-[980px] text-center text-[2.2rem] leading-[0.98] font-semibold tracking-[-0.04em] text-[#0b124b] lg:text-[64px]">
+        <h2 className="mx-auto max-w-[980px] text-center text-[2.05rem] leading-[1] font-semibold tracking-[-0.04em] text-[#0b124b] sm:text-[2.6rem] lg:text-[64px]">
           Companies are achieving more with Zoom
         </h2>
 
         <div
-          className="mt-10 flex h-[560px] flex-col gap-4 lg:h-[580px] lg:flex-row"
+          className="mt-8 flex flex-col gap-4 lg:mt-10 lg:h-[580px] lg:flex-row"
           onMouseLeave={() => setActiveIndex(0)}
         >
           {stories.map((story, index) => {
@@ -103,9 +103,9 @@ export function CustomerStoriesSection() {
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
-                className={`group relative overflow-hidden rounded-[26px] text-left transition-all duration-700 ease-in-out focus-visible:ring-2 focus-visible:ring-[#2467f4] focus-visible:outline-none ${
+                className={`group relative min-h-[128px] overflow-hidden rounded-[20px] text-left transition-all duration-700 ease-in-out focus-visible:ring-2 focus-visible:ring-[#2467f4] focus-visible:outline-none sm:rounded-[24px] lg:min-h-0 lg:rounded-[26px] ${
                   expanded
-                    ? "flex-[7.5]"
+                    ? "min-h-[430px] flex-[7.5] sm:min-h-[500px] lg:min-h-0"
                     : "flex-1"
                 }`}
                 style={{
@@ -131,19 +131,19 @@ export function CustomerStoriesSection() {
                 ) : null}
 
                 {expanded ? (
-                  <div className="relative flex h-full flex-col justify-between p-6 text-white sm:p-8 lg:p-10">
+                  <div className="relative flex h-full min-h-[430px] flex-col justify-between p-5 text-white sm:min-h-[500px] sm:p-8 lg:min-h-0 lg:p-10">
                     <div className="max-w-[640px]">
                       <StoryLogo
                         label={story.logo}
                         company={story.company}
                         expanded
                       />
-                      <h3 className="mt-6 max-w-[760px] text-[28px] leading-[1.06] font-semibold tracking-[-0.03em] sm:text-[34px] lg:text-[42px]">
+                      <h3 className="mt-5 max-w-[760px] text-[24px] leading-[1.08] font-semibold tracking-[-0.03em] sm:mt-6 sm:text-[34px] lg:text-[42px]">
                         {story.title}
                       </h3>
                     </div>
 
-                    <div className="flex items-end justify-between gap-6">
+                    <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end sm:gap-6">
                       <div className="max-w-[780px]">
                         <p className="text-[14px] leading-[1.45] text-white/92 sm:text-[16px] lg:text-[17px]">
                           {story.quote}
@@ -156,13 +156,13 @@ export function CustomerStoriesSection() {
                         </p>
                       </div>
 
-                      <span className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_12px_24px_rgba(36,103,244,0.28)] transition-transform duration-700 group-hover:scale-105">
+                      <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-[#2467f4] text-white shadow-[0_12px_24px_rgba(36,103,244,0.28)] transition-transform duration-700 group-hover:scale-105 sm:size-14">
                         <ArrowUpRight className="size-6" />
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="relative flex h-full items-end justify-center p-4 lg:p-5">
+                  <div className="relative flex h-full min-h-[128px] items-end justify-center p-4 lg:min-h-0 lg:p-5">
                     <div className="flex h-full w-full items-center justify-center">
                       <StoryLogo
                         label={story.logo}

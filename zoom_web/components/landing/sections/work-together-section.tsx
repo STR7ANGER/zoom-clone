@@ -183,13 +183,13 @@ export function WorkTogetherSection() {
           </p>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 lg:gap-3.5">
+        <div className="mt-8 flex snap-x items-center gap-2.5 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center sm:gap-3 sm:overflow-visible sm:pb-0 lg:gap-3.5">
           {tabs.map((tab) => (
             <button
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 sm:px-4 sm:text-[14px] lg:px-5 lg:py-3 lg:text-[15px] ${
+              className={`shrink-0 snap-center rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 sm:px-4 sm:text-[14px] lg:px-5 lg:py-3 lg:text-[15px] ${
                 activeTab === tab
                   ? "border-2 border-[#0b5cff] bg-[#eff5ff] text-[#0b124b] shadow-[0_8px_24px_rgba(36,103,244,0.12)]"
                   : "text-[#0b124b]/55 hover:text-[#0b124b]/80"
