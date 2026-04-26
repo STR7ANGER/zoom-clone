@@ -25,6 +25,20 @@ def get_env_list(name: str, default: list[str]) -> list[str]:
 
 FRONTEND_ORIGIN = get_env("FRONTEND_ORIGIN", "http://localhost:3000").rstrip("/")
 FRONTEND_BASE_URL = get_env("FRONTEND_BASE_URL", FRONTEND_ORIGIN).rstrip("/")
+JWT_SECRET_KEY = get_env("JWT_SECRET_KEY", "change-me-in-production")
+JWT_ALGORITHM = get_env("JWT_ALGORITHM", "HS256")
+JWT_EXPIRES_MINUTES = int(get_env("JWT_EXPIRES_MINUTES", "10080"))
+GOOGLE_CLIENT_ID = get_env("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = get_env("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT_URI = get_env(
+    "GOOGLE_REDIRECT_URI",
+    "http://localhost:8000/auth/google/callback",
+)
+SMTP_HOST = get_env("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(get_env("SMTP_PORT", "587"))
+SMTP_USER = get_env("SMTP_USER", "")
+SMTP_APP_PASSWORD = "".join(get_env("SMTP_APP_PASSWORD", "").split())
+MAIL_FROM = get_env("MAIL_FROM", SMTP_USER)
 CORS_ORIGINS = get_env_list(
     "CORS_ORIGINS",
     [

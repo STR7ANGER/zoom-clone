@@ -21,6 +21,7 @@ import {
   type Meeting,
 } from "@/lib/api"
 import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
+import { initials, useAuthStore } from "@/lib/auth-store"
 
 const quickActions = [
   { label: "New Meeting", href: null, icon: Video, color: "bg-[#ff7424]" },
@@ -69,6 +70,7 @@ export default function MyHomePage() {
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState("")
+  const user = useAuthStore((state) => state.user)
 
   useEffect(() => {
     let mounted = true
@@ -107,11 +109,11 @@ export default function MyHomePage() {
         <div className="space-y-5">
           <section className="flex flex-col gap-5 rounded-lg bg-white px-6 py-6 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex size-[70px] items-center justify-center rounded-[18px] bg-[#7b55c7] text-2xl font-bold text-white">
-                DU
+              <div className="flex size-[70px] items-center justify-center overflow-hidden rounded-[18px] bg-[#7b55c7] text-2xl font-bold text-white">
+                {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-[#10112f]">Demo User</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-[#10112f]">{user?.name ?? "Your Account"}</h1>
                 <p className="text-[14px] text-[#3f4354]">
                   Plan: <span className="font-semibold text-[#10112f]">Workplace Basic</span>
                 </p>

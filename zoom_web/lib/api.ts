@@ -1,7 +1,10 @@
+import { getAuthToken, type AuthUser } from "@/lib/auth-store"
+
 export type Participant = {
   participant_id: string
   meeting_id: string
   display_name: string
+  avatar_url: string | null
   role: "host" | "participant" | string
   muted: boolean
   camera_on: boolean
@@ -30,16 +33,24 @@ export type JoinMeetingResponse = {
 
 export type InstantMeetingResponse = JoinMeetingResponse
 
+export type AuthResponse = {
+  access_token: string
+  token_type: "bearer" | string
+  user: AuthUser
+}
+
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "http://localhost:8000"
 
 export const WS_BASE_URL = API_BASE_URL.replace(/^http/, "ws")
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = getAuthToken()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   })
@@ -84,11 +95,34 @@ export function createScheduledMeeting(payload: {
   starts_at: string
   duration_minutes: number
   host_name?: string
+  invitees?: string[]
 }) {
   return request<Meeting>("/meetings/scheduled", {
     method: "POST",
     body: JSON.stringify({ host_name: "Demo User", ...payload }),
   })
+}
+
+export function signup(payload: { email: string; name: string; password: string }) {
+  return request<AuthResponse>("/auth/signup", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+}
+
+export function login(payload: { email: string; password: string }) {
+  return request<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+}
+
+export function getMe() {
+  return request<AuthUser>("/auth/me", { cache: "no-store" })
+}
+
+export function googleOAuthUrl(next = "/myhome") {
+  return `${API_BASE_URL}/auth/google/start?next=${encodeURIComponent(next)}`
 }
 
 export function joinMeeting(meetingId: string, display_name: string) {
@@ -114,6 +148,12 @@ export function removeParticipant(meetingId: string, participantId: string) {
   })
 }
 
+export function endMeeting(meetingId: string, participantId: string) {
+  return request<void>(`/meetings/${meetingId}/end?participant_id=${encodeURIComponent(participantId)}`, {
+    method: "POST",
+  })
+}
+
 export function extractMeetingId(value: string) {
   const trimmed = value.trim()
   if (!trimmed) return ""
@@ -132,11 +172,13 @@ export function extractMeetingId(value: string) {
 }
 
 export function formatMeetingTime(value: string) {
+  const normalized = /(?:z|[+-]\d{2}:?\d{2})$/i.test(value) ? value : `${value}Z`
   return new Intl.DateTimeFormat("en", {
+    year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(new Date(value))
+    timeZoneName: "short",
+  }).format(new Date(normalized))
 }
-

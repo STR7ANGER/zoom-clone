@@ -14,6 +14,7 @@ import {
   Edit3,
   ExternalLink,
   FileText,
+  LogOut,
   MonitorUp,
   NotebookTabs,
   PanelLeft,
@@ -25,6 +26,8 @@ import {
 
 import { cn } from "@/lib/utils"
 import { createInstantMeeting } from "@/lib/api"
+import { AuthGuard } from "@/components/shared/auth-guard"
+import { initials, useAuthStore } from "@/lib/auth-store"
 
 type AccountPage = "home" | "meetings"
 
@@ -116,6 +119,9 @@ const legalLinks = [
 function AccountHeader() {
   const router = useRouter()
   const [creatingMeeting, setCreatingMeeting] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const user = useAuthStore((state) => state.user)
+  const signOut = useAuthStore((state) => state.signOut)
 
   async function hostMeeting() {
     if (creatingMeeting) return
@@ -153,10 +159,13 @@ function AccountHeader() {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="text-[34px] font-semibold leading-none tracking-[-0.06em] text-[#0b5cff]"
             aria-label="Zoom home"
           >
-            zoom
+            <img
+              src="https://st1.zoom.us/homepage/20260413-1449/primary/dist/assets/zoommedia/logo-zoom@2x.png"
+              alt="Zoom"
+              className="h-[30px] w-auto"
+            />
           </Link>
           <nav className="hidden items-center gap-8 text-[14px] font-semibold text-[#5f5d7b] lg:flex">
             <a href="#">Products</a>
@@ -179,9 +188,42 @@ function AccountHeader() {
           <a className="hidden items-center gap-1 md:flex" href="#">
             Web App <ChevronDown className="size-3.5" />
           </a>
-        <span className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[12px] font-bold text-white">
-          DU
-        </span>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen((open) => !open)}
+              className="inline-flex size-8 items-center justify-center overflow-hidden rounded-full bg-[#7b55c7] text-[12px] font-bold text-white"
+              aria-label={`${user?.name ?? "User"} menu`}
+              aria-expanded={userMenuOpen}
+            >
+              {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
+            </button>
+            {userMenuOpen ? (
+              <div className="absolute top-[42px] right-0 z-50 w-[240px] rounded-xl border border-[#e4e6ef] bg-white p-3 text-[#0b124b] shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                <div className="flex items-center gap-3 rounded-lg bg-[#f3f7ff] p-3">
+                  <span className="inline-flex size-10 items-center justify-center overflow-hidden rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white">
+                    {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-[14px] font-bold">{user?.name}</p>
+                    <p className="truncate text-[12px] text-[#697089]">{user?.email}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut()
+                    setUserMenuOpen(false)
+                    router.push("/")
+                  }}
+                  className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[#d7dbe8] text-[14px] font-semibold hover:bg-[#f5f7fb]"
+                >
+                  <LogOut className="size-4" />
+                  Sign Out
+                </button>
+              </div>
+            ) : null}
+          </div>
         </nav>
       </div>
     </header>
@@ -350,14 +392,16 @@ export function AccountShell({
   className?: string
 }) {
   return (
-    <main className="min-h-screen bg-white text-[#232333]">
-      <AccountHeader />
-      <div className="pt-[94px] lg:flex">
-        <AccountSidebar active={active} />
-        <section className={cn("min-w-0 flex-1", className)}>{children}</section>
-      </div>
-      <AccountFooter />
-    </main>
+    <AuthGuard>
+      <main className="min-h-screen bg-white text-[#232333]">
+        <AccountHeader />
+        <div className="pt-[94px] lg:flex">
+          <AccountSidebar active={active} />
+          <section className={cn("min-w-0 flex-1", className)}>{children}</section>
+        </div>
+        <AccountFooter />
+      </main>
+    </AuthGuard>
   )
 }
 

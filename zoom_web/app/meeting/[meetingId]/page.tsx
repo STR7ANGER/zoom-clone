@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 
 import {
+  endMeeting,
   getMeeting,
   removeParticipant,
   updateParticipant,
@@ -31,6 +32,7 @@ import {
   type Meeting,
   type Participant,
 } from "@/lib/api"
+import { useAuthStore } from "@/lib/auth-store"
 
 type ChatMessage = {
   id: string
@@ -66,6 +68,7 @@ function initials(name: string) {
 
 function ParticipantTile({
   name,
+  avatarUrl,
   muted = false,
   isHost = false,
   isSelf = false,
@@ -75,6 +78,7 @@ function ParticipantTile({
   screenSharing = false,
 }: {
   name: string
+  avatarUrl?: string | null
   muted?: boolean
   isHost?: boolean
   isSelf?: boolean
@@ -85,22 +89,29 @@ function ParticipantTile({
 }) {
   const remoteRef = useRef<HTMLVideoElement>(null)
   const ref = videoRef ?? remoteRef
+  const showVideo = cameraOn || screenSharing
 
   useEffect(() => {
     if (!videoRef && remoteRef.current && stream) {
       remoteRef.current.srcObject = stream
     }
-  }, [stream, videoRef])
+  }, [showVideo, stream, videoRef])
 
   return (
     <div className="relative flex min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-sm bg-[#1b1b1b]">
-      {(cameraOn || screenSharing || stream) ? (
+      {showVideo ? (
         <video
           ref={ref}
           autoPlay
           playsInline
           muted={isSelf}
           className="h-full w-full object-contain"
+        />
+      ) : avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt=""
+          className="aspect-square h-[min(38%,150px)] min-h-20 rounded-full object-cover"
         />
       ) : (
         <span className="flex aspect-square h-[min(38%,150px)] min-h-20 items-center justify-center bg-[#7959c7] text-[clamp(2.75rem,8vw,5.75rem)] font-light text-white">
@@ -124,6 +135,7 @@ function MeetingRoomContent() {
   const searchParams = useSearchParams()
   const meetingId = params.meetingId
   const participantId = searchParams.get("participantId") ?? ""
+  const isAuthenticated = useAuthStore((state) => Boolean(state.token))
   const localVideoRef = useRef<HTMLVideoElement>(null)
   const localStreamRef = useRef<MediaStream | null>(null)
   const displayStreamRef = useRef<MediaStream | null>(null)
@@ -146,6 +158,7 @@ function MeetingRoomContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [panelMode, setPanelMode] = useState<PanelMode>(null)
+  const [endMenuOpen, setEndMenuOpen] = useState(false)
 
   const self = participantId ? participants[participantId] : undefined
   const isHost = self?.role === "host"
@@ -322,12 +335,25 @@ function MeetingRoomContent() {
     return peer
   }
 
+  async function renegotiatePeer(peer: RTCPeerConnection, target: string) {
+    const offer = await peer.createOffer()
+    await peer.setLocalDescription(offer)
+    send({ type: "offer", target, offer })
+  }
+
   async function replaceOutgoingVideoTrack(track: MediaStreamTrack | null) {
     currentVideoTrackRef.current = track
     await Promise.all(
-      Object.values(peersRef.current).map(async (peer) => {
-        const sender = peer.getSenders().find((item) => item.track?.kind === "video")
-        if (sender) await sender.replaceTrack(track)
+      Object.entries(peersRef.current).map(async ([target, peer]) => {
+        const sender =
+          peer.getSenders().find((item) => item.track?.kind === "video") ??
+          peer.getTransceivers().find((item) => item.receiver.track.kind === "video")?.sender
+        if (sender) {
+          await sender.replaceTrack(track)
+        } else if (track && localStreamRef.current) {
+          peer.addTrack(track, localStreamRef.current)
+          await renegotiatePeer(peer, target)
+        }
       }),
     )
   }
@@ -344,6 +370,7 @@ function MeetingRoomContent() {
     }
 
     if (message.type === "participant-left" && message.participantId) {
+      if (message.participantId === participantId) return
       peersRef.current[message.participantId]?.close()
       delete peersRef.current[message.participantId]
       setRemoteStreams((current) => {
@@ -378,7 +405,12 @@ function MeetingRoomContent() {
     }
 
     if (message.type === "removed") {
-      await leaveMeeting()
+      await leaveMeeting({ notifyBackend: false })
+      return
+    }
+
+    if (message.type === "meeting-ended") {
+      await leaveMeeting({ notifyBackend: false })
       return
     }
 
@@ -415,12 +447,11 @@ function MeetingRoomContent() {
 
   async function toggleCamera() {
     const nextCameraOn = !cameraOn
-    localStreamRef.current?.getVideoTracks().forEach((track) => {
-      track.enabled = nextCameraOn
-    })
+    const localVideoTrack = localStreamRef.current?.getVideoTracks()[0] ?? null
+    if (localVideoTrack) localVideoTrack.enabled = nextCameraOn
     setCameraOn(nextCameraOn)
-    if (!screenSharing) {
-      await replaceOutgoingVideoTrack(nextCameraOn ? (localStreamRef.current?.getVideoTracks()[0] ?? null) : null)
+    if (!screenSharing && nextCameraOn) {
+      await replaceOutgoingVideoTrack(localVideoTrack)
     }
     if (participantId) {
       const updated = await updateParticipant(participantId, { camera_on: nextCameraOn })
@@ -453,14 +484,20 @@ function MeetingRoomContent() {
     await replaceOutgoingVideoTrack(cameraTrack)
   }
 
-  async function leaveMeeting() {
-    if (participantId) {
+  async function leaveMeeting({ notifyBackend = true } = {}) {
+    if (notifyBackend && participantId) {
       await updateParticipant(participantId, { left: true }).catch(() => undefined)
     }
     socketRef.current?.close()
     localStreamRef.current?.getTracks().forEach((track) => track.stop())
     displayStreamRef.current?.getTracks().forEach((track) => track.stop())
-    router.push("/myhome")
+    router.push(isAuthenticated ? "/myhome" : "/")
+  }
+
+  async function handleEndMeeting() {
+    if (!meeting || !participantId) return
+    await endMeeting(meeting.meeting_id, participantId)
+    await leaveMeeting({ notifyBackend: false })
   }
 
   async function handleRemove(targetParticipantId: string) {
@@ -554,6 +591,7 @@ function MeetingRoomContent() {
           <div className={`grid h-full w-full gap-1 ${gridClass}`}>
             <ParticipantTile
               name={self?.display_name ?? "Demo User"}
+              avatarUrl={self?.avatar_url}
               muted={muted}
               isHost={isHost}
               isSelf
@@ -565,6 +603,7 @@ function MeetingRoomContent() {
               <ParticipantTile
                 key={id}
                 name={participants[id]?.display_name ?? "Participant"}
+                avatarUrl={participants[id]?.avatar_url}
                 muted={participants[id]?.muted}
                 isHost={participants[id]?.role === "host"}
                 cameraOn={participants[id]?.camera_on}
@@ -580,8 +619,8 @@ function MeetingRoomContent() {
         </div>
 
         <footer
-          className={`flex items-center justify-between overflow-hidden bg-black px-7 transition-[height,opacity] duration-200 ${
-            showChrome ? "h-[66px] opacity-100" : "h-0 opacity-0"
+          className={`flex items-center justify-between bg-black px-7 transition-[height,opacity] duration-200 ${
+            showChrome ? "h-[66px] overflow-visible opacity-100" : "h-0 overflow-hidden opacity-0"
           }`}
         >
           <div className="flex min-w-[240px] items-center gap-8">
@@ -615,12 +654,52 @@ function MeetingRoomContent() {
             <ToolButton icon={MoreHorizontal} label="More" onClick={() => undefined} />
           </div>
           <div className="flex min-w-[160px] justify-end">
-            <button type="button" onClick={leaveMeeting} className="flex flex-col items-center gap-0.5 text-white">
-              <span className="flex size-9 items-center justify-center rounded-md border-2 border-[#ff3568] text-[#ff3568]">
-                <X className="size-6" />
-              </span>
-              <span className="text-sm">End</span>
-            </button>
+            {isHost ? (
+              <div className="relative">
+                {endMenuOpen ? (
+                  <div className="absolute right-0 bottom-[42px] z-[100] w-44 overflow-hidden rounded-md border border-white/10 bg-[#2b2b2b] py-1 text-[12px] font-medium text-white shadow-2xl">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEndMenuOpen(false)
+                        void leaveMeeting()
+                      }}
+                      className="block w-full px-3 py-2 text-left hover:bg-white/10"
+                    >
+                      Leave Meeting
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEndMenuOpen(false)
+                        void handleEndMeeting()
+                      }}
+                      className="block w-full px-3 py-2 text-left text-[#ff5b5b] hover:bg-white/10"
+                    >
+                      End Meeting for All
+                    </button>
+                  </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => setEndMenuOpen((open) => !open)}
+                  className="flex flex-col items-center gap-0.5 text-white"
+                  aria-expanded={endMenuOpen}
+                >
+                  <span className="flex size-9 items-center justify-center rounded-md border-2 border-[#ff3568] bg-[#ff3568] text-white">
+                    <X className="size-6" />
+                  </span>
+                  <span className="text-sm">End</span>
+                </button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => leaveMeeting()} className="flex flex-col items-center gap-0.5 text-white">
+                <span className="flex size-9 items-center justify-center rounded-md border-2 border-[#ff3568] text-[#ff3568]">
+                  <X className="size-6" />
+                </span>
+                <span className="text-sm">Leave</span>
+              </button>
+            )}
           </div>
         </footer>
       </section>
@@ -722,8 +801,12 @@ function ParticipantsPanel({
         {participants.map((participant) => (
           <div key={participant.participant_id} className="flex items-center justify-between rounded-md px-1 py-3">
             <div className="flex min-w-0 items-center gap-4">
-              <span className="flex size-11 items-center justify-center rounded-lg bg-[#7959c7] text-xl text-white">
-                {initials(participant.display_name)}
+              <span className="flex size-11 items-center justify-center overflow-hidden rounded-lg bg-[#7959c7] text-xl text-white">
+                {participant.avatar_url ? (
+                  <img src={participant.avatar_url} alt="" className="size-full object-cover" />
+                ) : (
+                  initials(participant.display_name)
+                )}
               </span>
               <p className="truncate text-lg">
                 {participant.display_name}

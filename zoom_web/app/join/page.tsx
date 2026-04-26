@@ -12,27 +12,34 @@ import {
   getMeeting,
   joinMeeting,
 } from "@/lib/api"
+import { initials, useAuthStore } from "@/lib/auth-store"
 
 function JoinContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [meetingValue, setMeetingValue] = useState(() => searchParams.get("meeting") ?? "")
   const [displayName, setDisplayName] = useState("Demo User")
+  const [nameTouched, setNameTouched] = useState(false)
   const [loading, setLoading] = useState(false)
   const [creatingMeeting, setCreatingMeeting] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [error, setError] = useState("")
+  const token = useAuthStore((state) => state.token)
+  const user = useAuthStore((state) => state.user)
+  const signOut = useAuthStore((state) => state.signOut)
+  const isSignedIn = Boolean(token && user)
+  const currentDisplayName = nameTouched ? displayName : user?.name ?? "Demo User"
 
   async function handleJoin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const meetingId = extractMeetingId(meetingValue)
-    if (!meetingId || !displayName.trim()) return
+    if (!meetingId || !currentDisplayName.trim()) return
 
     setLoading(true)
     setError("")
     try {
       await getMeeting(meetingId)
-      const { participant } = await joinMeeting(meetingId, displayName)
+      const { participant } = await joinMeeting(meetingId, currentDisplayName)
       router.push(`/meeting/${meetingId}?participantId=${participant.participant_id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to join meeting")
@@ -42,10 +49,14 @@ function JoinContent() {
 
   async function hostMeeting() {
     if (creatingMeeting) return
+    if (!isSignedIn) {
+      router.push("/signin?next=/myhome")
+      return
+    }
     setCreatingMeeting(true)
     setError("")
     try {
-      const { meeting, participant } = await createInstantMeeting("Demo User")
+      const { meeting, participant } = await createInstantMeeting(user?.name ?? "Host")
       router.push(
         `/meeting/${meeting.meeting_id}?participantId=${participant.participant_id}`,
       )
@@ -71,6 +82,12 @@ function JoinContent() {
           </a>
           <Link
             href="/schedule"
+            onClick={(event) => {
+              if (!isSignedIn) {
+                event.preventDefault()
+                router.push("/signin?next=/schedule")
+              }
+            }}
             className="hover:text-[#0b5cff]"
           >
             Schedule
@@ -89,33 +106,44 @@ function JoinContent() {
           <button type="button" className="inline-flex items-center gap-1 hover:text-[#0b5cff]">
             Web App <ChevronDown className="size-3.5" />
           </button>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setUserMenuOpen((open) => !open)}
-              className="inline-flex size-8 items-center justify-center rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white"
-              aria-label="Demo User menu"
-              aria-expanded={userMenuOpen}
-            >
-              DU
-            </button>
-            {userMenuOpen ? (
-              <div className="absolute right-0 top-[42px] w-[220px] rounded-xl border border-[#e4e6ef] bg-white p-3 text-[#0b124b] shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
-                <div className="flex items-center gap-3 rounded-lg bg-[#f3f7ff] p-3">
-                  <span className="inline-flex size-10 items-center justify-center rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white">
-                    DU
-                  </span>
-                  <span className="text-[15px] font-bold">Demo User</span>
+          {isSignedIn ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                className="inline-flex size-8 items-center justify-center overflow-hidden rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white"
+                aria-label={`${user?.name} menu`}
+                aria-expanded={userMenuOpen}
+              >
+                {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
+              </button>
+              {userMenuOpen ? (
+                <div className="absolute right-0 top-[42px] w-[220px] rounded-xl border border-[#e4e6ef] bg-white p-3 text-[#0b124b] shadow-[0_18px_42px_rgba(15,23,42,0.16)]">
+                  <div className="flex items-center gap-3 rounded-lg bg-[#f3f7ff] p-3">
+                    <span className="inline-flex size-10 items-center justify-center overflow-hidden rounded-full bg-[#7b55c7] text-[13px] font-semibold text-white">
+                      {user?.avatar_url ? <img src={user.avatar_url} alt="" className="size-full object-cover" /> : initials(user?.name ?? "")}
+                    </span>
+                    <span className="truncate text-[15px] font-bold">{user?.name}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      signOut()
+                      router.push("/")
+                    }}
+                    className="mt-3 h-10 w-full rounded-lg border border-[#d7dbe8] text-[14px] font-semibold hover:bg-[#f5f7fb]"
+                  >
+                    Sign Out
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="mt-3 h-10 w-full rounded-lg border border-[#d7dbe8] text-[14px] font-semibold hover:bg-[#f5f7fb]"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : null}
-          </div>
+              ) : null}
+            </div>
+          ) : (
+            <>
+              <Link href="/signin" className="hover:text-[#0b5cff]">Sign In</Link>
+              <Link href="/signup" className="rounded-md bg-[#0b5cff] px-3 py-1.5 text-white hover:bg-[#084bd8]">Sign Up Free</Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -141,8 +169,11 @@ function JoinContent() {
           </label>
           <input
             type="text"
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
+            value={currentDisplayName}
+            onChange={(event) => {
+              setNameTouched(true)
+              setDisplayName(event.target.value)
+            }}
             placeholder="Enter your name"
             className="h-[36px] w-full rounded-[9px] border border-[#aeb4c1] px-4 text-[15px] text-[#232333] placeholder:text-[#74788d] focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/20 focus:outline-none"
           />
@@ -152,7 +183,7 @@ function JoinContent() {
           ) : null}
 
           <button
-            disabled={!extractMeetingId(meetingValue) || !displayName.trim() || loading}
+            disabled={!extractMeetingId(meetingValue) || !currentDisplayName.trim() || loading}
             className="mt-4 inline-flex h-[35px] w-full items-center justify-center gap-2 rounded-[8px] bg-[#0b5cff] text-[15px] font-medium text-white transition-colors hover:bg-[#0a52e8] disabled:cursor-not-allowed disabled:bg-[#e7e8ee] disabled:text-[#8b8f99]"
           >
             {loading ? <Loader2 className="size-4 animate-spin" /> : null}

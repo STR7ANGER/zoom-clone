@@ -2,11 +2,13 @@
 
 import Link from "next/link"
 import { useMemo, useState } from "react"
-import { CalendarDays, ChevronLeft, Copy, Loader2, Plus, TriangleAlert } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { CalendarDays, ChevronLeft, Loader2, Plus, X } from "lucide-react"
+import { toast } from "sonner"
 
 import { AccountShell } from "@/components/shared/account-shell"
 import { LandingFloatingWidgets } from "@/components/landing/landing-floating-widgets"
-import { createScheduledMeeting, type Meeting } from "@/lib/api"
+import { createScheduledMeeting } from "@/lib/api"
 
 const inputClass =
   "h-10 rounded-md border border-[#b8c0cc] bg-white px-3 text-[14px] text-[#232333] outline-none focus:border-[#0b5cff] focus:ring-2 focus:ring-[#0b5cff]/10"
@@ -32,30 +34,59 @@ function Row({
 }
 
 export default function SchedulePage() {
+  const router = useRouter()
   const [title, setTitle] = useState("My Meeting")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [time, setTime] = useState("18:30")
   const [duration, setDuration] = useState(40)
-  const [createdMeeting, setCreatedMeeting] = useState<Meeting | null>(null)
+  const [inviteeInput, setInviteeInput] = useState("")
+  const [invitees, setInvitees] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const startsAt = useMemo(() => new Date(`${date}T${time}:00`).toISOString(), [date, time])
+  const startsAt = useMemo(() => {
+    const parsedDate = new Date(`${date}T${time}:00`)
+    if (Number.isNaN(parsedDate.getTime())) {
+      return null
+    }
+    return parsedDate.toISOString()
+  }, [date, time])
+
+  function addInvitee() {
+    const email = inviteeInput.trim().toLowerCase()
+    if (!email) return
+    if (!email.includes("@") || !email.split("@")[1]?.includes(".")) {
+      setError("Please enter a valid invitee email.")
+      return
+    }
+    setError("")
+    setInvitees((current) => (current.includes(email) ? current : [...current, email]))
+    setInviteeInput("")
+  }
+
+  function removeInvitee(email: string) {
+    setInvitees((current) => current.filter((invitee) => invitee !== email))
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (!startsAt) {
+      setError("Please select a valid date and time.")
+      return
+    }
     setLoading(true)
     setError("")
-    setCreatedMeeting(null)
     try {
-      const meeting = await createScheduledMeeting({
+      await createScheduledMeeting({
         title,
         description,
         starts_at: startsAt,
         duration_minutes: duration,
+        invitees,
       })
-      setCreatedMeeting(meeting)
+      toast.success("Meeting scheduled")
+      router.push("/myhome")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to schedule meeting")
     } finally {
@@ -112,59 +143,60 @@ export default function SchedulePage() {
                 <option value={60}>1 hour</option>
                 <option value={90}>1 hour 30 minutes</option>
               </select>
-              <div className="mt-4 flex max-w-[620px] gap-2 rounded-md bg-[#fff8ef] px-3 py-2.5 text-[14px] leading-snug">
-                <TriangleAlert className="mt-0.5 size-4 shrink-0 fill-[#ffc400] text-[#d99a00]" />
-                <p>Basic demo meetings default to Zoom-like 40 minute sessions, but the database stores any selected duration.</p>
-              </div>
             </Row>
 
-            <Row label="Meeting ID">
-              <label className="flex items-center gap-2 pt-2 text-[14px] text-[#232333]">
-                <input type="radio" defaultChecked className="size-3.5 accent-[#0b5cff]" />
-                Generate Automatically
-              </label>
-            </Row>
-
-            <Row label="Security">
-              <div className="space-y-2 pt-2 text-[14px]">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" defaultChecked className="size-3.5 accent-[#0b5cff]" />
-                  Waiting Room
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" defaultChecked className="size-3.5 accent-[#0b5cff]" />
-                  Mute participants upon entry
-                </label>
+            <Row label="Invitees">
+              <div className="flex w-full max-w-[520px] flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    className={`${inputClass} min-w-0 flex-1`}
+                    value={inviteeInput}
+                    onChange={(event) => setInviteeInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault()
+                        addInvitee()
+                      }
+                    }}
+                    placeholder="Enter invitee email"
+                    type="email"
+                  />
+                  <button
+                    type="button"
+                    onClick={addInvitee}
+                    className="inline-flex h-10 items-center justify-center rounded-md border border-[#9aa4b4] px-4 text-[14px] font-semibold text-[#24242e] hover:bg-[#f3f7ff]"
+                  >
+                    Add
+                  </button>
+                </div>
+                {invitees.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {invitees.map((email) => (
+                      <span
+                        key={email}
+                        className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#b9d3ff] bg-[#f3f7ff] px-3 py-1.5 text-[13px] font-medium text-[#0b124b]"
+                      >
+                        <span className="truncate">{email}</span>
+                        <button type="button" onClick={() => removeInvitee(email)} aria-label={`Remove ${email}`}>
+                          <X className="size-3.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
+              <p className="mt-2 max-w-[520px] text-[13px] text-[#697089]">
+                Invitees receive the meeting title, date, time, duration, and join URL.
+              </p>
             </Row>
 
             {error ? (
               <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:ml-[145px]">{error}</div>
             ) : null}
 
-            {createdMeeting ? (
-              <div className="rounded-lg border border-[#b9d3ff] bg-[#f3f7ff] p-4 sm:ml-[145px]">
-                <p className="text-[14px] font-semibold text-[#10112f]">Meeting scheduled</p>
-                <p className="mt-1 break-all text-[13px] text-[#4d5263]">{createdMeeting.invite_link}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => navigator.clipboard.writeText(createdMeeting.invite_link)}
-                    className="inline-flex items-center gap-2 rounded-md border border-[#9aa4b4] px-3 py-1.5 text-[14px]"
-                  >
-                    <Copy className="size-4" />
-                    Copy Link
-                  </button>
-                  <Link href={`/join?meeting=${createdMeeting.meeting_id}`} className="rounded-md bg-[#0b5cff] px-3 py-1.5 text-[14px] font-semibold text-white">
-                    Open Join Page
-                  </Link>
-                </div>
-              </div>
-            ) : null}
-
             <div className="flex gap-2 pt-1 sm:pl-[145px]">
               <button
-                disabled={!title.trim() || loading}
+                disabled={!title.trim() || !startsAt || loading}
                 className="inline-flex items-center gap-2 rounded-md bg-[#0b5cff] px-4 py-2 text-[14px] font-semibold text-white disabled:opacity-60"
               >
                 {loading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
