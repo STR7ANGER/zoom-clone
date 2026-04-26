@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
-import { ChevronDown, Grip, LogOut, Menu, Search } from "lucide-react"
+import { ChevronDown, Grip, LayoutDashboard, LogOut, Menu, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { NavbarAiDropdown } from "@/components/layout/navbar-ai-dropdown"
@@ -251,7 +251,10 @@ export function Navbar() {
                 <p className="truncate text-xs text-[#697089]">{user?.email}</p>
               </div>
             </div>
-            <button type="button" onClick={() => { signOut(); setActiveUtility(null); router.push("/") }} className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#f3f7ff]">
+            <button type="button" onClick={() => { setActiveUtility(null); router.push("/myhome") }} className="mt-3 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#f3f7ff]">
+              <LayoutDashboard className="size-4" /> Dashboard
+            </button>
+            <button type="button" onClick={() => { signOut(); setActiveUtility(null); router.push("/") }} className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#f3f7ff]">
               <LogOut className="size-4" /> Sign Out
             </button>
           </div>
